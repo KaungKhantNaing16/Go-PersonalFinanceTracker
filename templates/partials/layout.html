@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ template "title" }}</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/style.css" type="text/css">
+</head>
+<body>
+    <div class="wrapper d-flex align-items-stretch">
+        <nav id="sidebar" class="active">
+            <h1>
+                <a href="/" class="logo">
+                    <img src="/static/img/logo-icon.png" alt="logo">
+                </a>
+            </h1>
+            <ul class="list-unstyled components mb-5">
+                <li class="active">
+                    <a href="/"><span class="fa fa-home"></span>Summary</a>
+                </li>
+                <li>
+                    <a href="/incomes/"><span class="fa fa-user"></span>Income List</a>
+                </li>
+                <li>
+                    <a href="/expenses/"><span class="fa fa-sticky-note"></span>Expenses List</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-cogs"></span>Budget Plan List</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-paper-plane"></span>Giving Loan List</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-paper-plane"></span>Receiving Loan List</a>
+                </li>
+            </ul>
+
+            <div class="footer">
+                <p>
+                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | 
+                    This template is made with <i class="icon-heart" aria-hidden="true"></i> by KKN.
+                </p>
+            </div>
+        </nav>
+        <div id="content" class="p-4 p-md-5">
+            <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                <i class="fa fa-bars"></i>
+                <span class="sr-only">Toggle Menu</span>
+            </button>
+            <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <h2 class="mb-4">{{ template "pageTtl" }}</h2>
+            {{ template "main" }}
+        </div>
+    </div>
+
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/popper.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
