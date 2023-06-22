@@ -71,7 +71,7 @@ func CreateExpenses(writer http.ResponseWriter, request *http.Request) {
 
 func UpdateExpenses(writer http.ResponseWriter, request *http.Request) {
 	loadTemplates()
-	err := tmpl["update"].Execute(writer, nil)
+	err := tmpl["edit"].Execute(writer, nil)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

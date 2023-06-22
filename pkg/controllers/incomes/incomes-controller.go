@@ -47,17 +47,37 @@ func GetIncomes(writer http.ResponseWriter, request *http.Request) {
 }
 
 func GetIncomeById(writer http.ResponseWriter, request *http.Request) {
-
+	loadTemplates()
+	err := tmpl["detail"].Execute(writer, nil)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func CreateIncome(writer http.ResponseWriter, request *http.Request) {
-
+	loadTemplates()
+	err := tmpl["create"].Execute(writer, nil)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func UpdateIncome(writer http.ResponseWriter, request *http.Request) {
-
+	loadTemplates()
+	err := tmpl["edit"].Execute(writer, nil)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func DeleteIncome(writer http.ResponseWriter, request *http.Request) {
-
+	loadTemplates()
+	err := tmpl["index"].Execute(writer, nil)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
