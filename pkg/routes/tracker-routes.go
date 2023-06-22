@@ -1,24 +1,35 @@
 package routes
 
 import (
+	budgetcontroller "Go-PersonalFinanceTracker/pkg/controllers/budget"
 	expcontroller "Go-PersonalFinanceTracker/pkg/controllers/expenses"
 	incontroller "Go-PersonalFinanceTracker/pkg/controllers/incomes"
+	loancontroller "Go-PersonalFinanceTracker/pkg/controllers/loan"
 
 	"github.com/gorilla/mux"
 )
 
 var RegisterIncomeRoutes = func(router *mux.Router) {
-	router.HandleFunc("/incomes/", incontroller.GetIncomes).Methods("GET")
-	router.HandleFunc("/income/create", incontroller.CreateIncome).Methods("POST")
-	router.HandleFunc("/income/detail", incontroller.GetIncomeById).Methods("GET")
-	router.HandleFunc("/income/update", incontroller.UpdateIncome).Methods("PUT")
-	router.HandleFunc("/income/delete", incontroller.DeleteIncome).Methods("DELETE")
+	router.HandleFunc("/incomes/", incontroller.GetIncomes)
+	router.HandleFunc("/income/create", incontroller.CreateIncome)
+	router.HandleFunc("/income/detail", incontroller.GetIncomeById)
+	router.HandleFunc("/income/update", incontroller.UpdateIncome)
+	router.HandleFunc("/income/delete", incontroller.DeleteIncome)
 }
 
 var RegisterExpensesRoutes = func(router *mux.Router) {
-	router.HandleFunc("/expenses/", expcontroller.GetExpenses).Methods("GET")
-	router.HandleFunc("/expenses/create", expcontroller.CreateExpenses).Methods("POST")
-	router.HandleFunc("/expenses/detail", expcontroller.GetExpensesById).Methods("GET")
-	router.HandleFunc("/expenses/update", expcontroller.UpdateExpenses).Methods("PUT")
-	router.HandleFunc("/expenses/delete", expcontroller.DeleteExpenses).Methods("DELETE")
+	router.HandleFunc("/expenses/", expcontroller.GetExpenses)
+	router.HandleFunc("/expenses/create", expcontroller.CreateExpenses)
+	router.HandleFunc("/expenses/detail", expcontroller.GetExpensesById)
+	router.HandleFunc("/expenses/update", expcontroller.UpdateExpenses)
+	router.HandleFunc("/expenses/delete", expcontroller.DeleteExpenses)
+}
+
+var RegisterLoanRoutes = func(router *mux.Router) {
+	router.HandleFunc("/loan/give", loancontroller.GetGiveLoan)
+	router.HandleFunc("/loan/recieve", loancontroller.GetReceiveLoan)
+}
+
+var RegisterBudgetRoutes = func(router *mux.Router) {
+	router.HandleFunc("/budget", budgetcontroller.GetBudgetsList)
 }

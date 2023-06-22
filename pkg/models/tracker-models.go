@@ -55,3 +55,23 @@ type Category struct {
 	UpdatedAt   time.Time
 	DeletedAt   time.Time
 }
+
+// Loan struct
+type Loan struct {
+	ID          int
+	Title       int
+	Description string
+	Amount      int
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+// Budget struct
+type Budget struct {
+	ID          int
+	Title       int
+	Description string
+	Amount      int
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}

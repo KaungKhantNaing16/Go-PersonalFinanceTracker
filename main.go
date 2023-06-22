@@ -28,6 +28,8 @@ func main() {
 	r.HandleFunc("/", IndexHandler)
 	routes.RegisterExpensesRoutes(r)
 	routes.RegisterIncomeRoutes(r)
+	routes.RegisterLoanRoutes(r)
+	routes.RegisterBudgetRoutes(r)
 	err := http.ListenAndServe(":8080", r)
 	fmt.Println(err)
 }
