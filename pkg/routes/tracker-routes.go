@@ -8,19 +8,17 @@ import (
 )
 
 var RegisterIncomeRoutes = func(router *mux.Router) {
-	income := router.PathPrefix("/tracker").Subrouter()
-	income.HandleFunc("/incomes/", incontroller.GetIncomes).Methods("GET")
-	income.HandleFunc("/income/", incontroller.CreateIncome).Methods("POST")
-	income.HandleFunc("/income/:id", incontroller.GetIncomeById).Methods("GET")
-	income.HandleFunc("/income/:id", incontroller.UpdateIncome).Methods("PUT")
-	income.HandleFunc("/income/:id", incontroller.DeleteIncome).Methods("DELETE")
+	router.HandleFunc("/incomes/", incontroller.GetIncomes).Methods("GET")
+	router.HandleFunc("/income/create", incontroller.CreateIncome).Methods("POST")
+	router.HandleFunc("/income/detail", incontroller.GetIncomeById).Methods("GET")
+	router.HandleFunc("/income/update", incontroller.UpdateIncome).Methods("PUT")
+	router.HandleFunc("/income/delete", incontroller.DeleteIncome).Methods("DELETE")
 }
 
 var RegisterExpensesRoutes = func(router *mux.Router) {
-	expenses := router.PathPrefix("/tracker").Subrouter()
-	expenses.HandleFunc("/expenses/", expcontroller.GetExpenses).Methods("GET")
-	expenses.HandleFunc("/expenses/", expcontroller.CreateExpenses).Methods("POST")
-	expenses.HandleFunc("/expenses/:id", expcontroller.GetExpensesById).Methods("GET")
-	expenses.HandleFunc("/expenses/:id", expcontroller.UpdateExpenses).Methods("PUT")
-	expenses.HandleFunc("/expenses/:id", expcontroller.DeleteExpenses).Methods("DELETE")
+	router.HandleFunc("/expenses/", expcontroller.GetExpenses).Methods("GET")
+	router.HandleFunc("/expenses/create", expcontroller.CreateExpenses).Methods("POST")
+	router.HandleFunc("/expenses/detail", expcontroller.GetExpensesById).Methods("GET")
+	router.HandleFunc("/expenses/update", expcontroller.UpdateExpenses).Methods("PUT")
+	router.HandleFunc("/expenses/delete", expcontroller.DeleteExpenses).Methods("DELETE")
 }

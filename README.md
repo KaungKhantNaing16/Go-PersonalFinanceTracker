@@ -47,6 +47,6 @@ The Personal Finances Tracker is a Go-based web application that allows users to
     ```bash
     go run main.go
 
-Open your web browser and visit http://localhost:8000 to access the personal finances tracker application.
+Open your web browser and visit http://localhost:8080 to access the personal finances tracker application.
 
 
