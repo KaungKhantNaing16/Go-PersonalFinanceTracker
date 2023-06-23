@@ -42,7 +42,12 @@ The Personal Finances Tracker is a Go-based web application that allows users to
     ```bash
     go mod download
 
-4. Run the project
+4. Analyze code and the imports required dependencies
+
+   ```bash
+   go mod tidy
+
+5. Run the project
 
     ```bash
     go run main.go
