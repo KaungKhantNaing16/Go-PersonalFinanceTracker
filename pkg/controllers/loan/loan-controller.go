@@ -12,6 +12,7 @@ var tmpl = make(map[string]*template.Template)
 var fileNames []string
 
 func loadTemplates() {
+	templatePartialDir := "templates/partials/"
 	templatesDir := "templates/loan/"
 	pattern := templatesDir + "*.html"
 	matches, err := filepath.Glob(pattern)
@@ -26,7 +27,7 @@ func loadTemplates() {
 	}
 
 	for index, name := range fileNames {
-		t, err := template.ParseFiles("templates/partials/layout.html", templatesDir+name+".html")
+		t, err := template.ParseFiles(templatePartialDir+"layout.html", templatePartialDir+"dataTable.html", templatesDir+name+".html")
 		if err == nil {
 			tmpl[name] = t
 			fmt.Println("Load Template", index, name)

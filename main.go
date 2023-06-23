@@ -10,7 +10,8 @@ import (
 )
 
 func IndexHandler(writer http.ResponseWriter, req *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/partials/layout.html", "templates/index.html"))
+	templatePartialDir := "templates/partials/"
+	tmpl := template.Must(template.ParseFiles(templatePartialDir+"layout.html", templatePartialDir+"dataTable.html", "templates/index.html"))
 
 	err := tmpl.ExecuteTemplate(writer, "layout.html", nil)
 	if err != nil {
