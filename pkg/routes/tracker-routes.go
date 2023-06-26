@@ -6,6 +6,7 @@ import (
 	expcontroller "Go-PersonalFinanceTracker/pkg/controllers/expenses"
 	incontroller "Go-PersonalFinanceTracker/pkg/controllers/incomes"
 	loancontroller "Go-PersonalFinanceTracker/pkg/controllers/loan"
+	mediacontroller "Go-PersonalFinanceTracker/pkg/controllers/media"
 
 	"github.com/gorilla/mux"
 )
@@ -39,4 +40,8 @@ var RegisterLoanRoutes = func(router *mux.Router) {
 
 var RegisterBudgetRoutes = func(router *mux.Router) {
 	router.HandleFunc("/budget", budgetcontroller.GetBudgetsList)
+}
+
+var RegisterMediaRoutes = func(router *mux.Router) {
+	router.HandleFunc("/media", mediacontroller.GetMedia)
 }

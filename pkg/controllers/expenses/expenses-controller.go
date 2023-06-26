@@ -3,10 +3,10 @@ package expcontroller
 import (
 	expservice "Go-PersonalFinanceTracker/pkg/services/expenses"
 	"fmt"
+	"html/template"
 	"net/http"
 	"path/filepath"
 	"strings"
-	"text/template"
 )
 
 var tmpl = make(map[string]*template.Template)

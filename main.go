@@ -3,8 +3,8 @@ package main
 import (
 	"Go-PersonalFinanceTracker/pkg/routes"
 	"fmt"
+	"html/template"
 	"net/http"
-	"text/template"
 
 	"github.com/gorilla/mux"
 )
@@ -32,6 +32,7 @@ func main() {
 	routes.RegisterIncomeRoutes(r)
 	routes.RegisterLoanRoutes(r)
 	routes.RegisterBudgetRoutes(r)
+	routes.RegisterMediaRoutes(r)
 	err := http.ListenAndServe(":8080", r)
 	fmt.Println(err)
 }
