@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func IndexHandler(writer http.ResponseWriter, req *http.Request) {
+func dashboardHandler(writer http.ResponseWriter, req *http.Request) {
 	templatePartialDir := "templates/partials/"
 	tmpl := template.Must(template.ParseFiles(templatePartialDir+"layout.html", templatePartialDir+"dataTable.html", "templates/index.html"))
 
@@ -26,7 +26,8 @@ func main() {
 	fs := http.FileServer(http.Dir("static/"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
-	r.HandleFunc("/", IndexHandler)
+	r.HandleFunc("/dashboard", dashboardHandler)
+	routes.RegisterAuthRoutes(r)
 	routes.RegisterExpensesRoutes(r)
 	routes.RegisterIncomeRoutes(r)
 	routes.RegisterLoanRoutes(r)

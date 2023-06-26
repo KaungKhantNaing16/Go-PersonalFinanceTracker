@@ -15,7 +15,7 @@
     <div class="wrapper d-flex align-items-stretch">
         <nav id="sidebar">
             <h1 class="my-5">
-                <a href="/" class="logo">
+                <a href="/dashboard" class="logo">
                     <img src="/static/img/logo-icon.png" alt="logo"> PFT
                 </a>
             </h1>
@@ -23,7 +23,7 @@
             <div class="side-content">
                 <ul class="list-unstyled components mb-5">
                     <li class="menu-item active">
-                        <a href="/"><span class="fa fa-university"></span>Summary</a>
+                        <a href="/dashboard"><span class="fa fa-university"></span>Summary</a>
                     </li>
                     <li class="menu-item">
                         <a href="/incomes/"><span class="fa fa-usd"></span>Income List</a>
@@ -45,7 +45,9 @@
                     </li>
                 </ul>
             </div>
-            
+            <div class="logout-btn">
+                <a href="/logout" class="btn btn-outline-light"><i class="fa fa-sign-out me-1"></i>logout</a>
+            </div>
             <div class="footer">
                 <p>
                     Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved.

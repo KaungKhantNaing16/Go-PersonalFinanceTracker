@@ -1,16 +1,9 @@
 {{ define "title" }} Incomes List {{ end }}
-{{ define "pageTtl" }} Incomes List {{ end }}
+{{ define "pageTtl" }} Incomes {{ end }}
 {{ define "content" }}
-<ul>
-    <li>
-        <a href="/income/detail">Detail Page</a>
-    </li>
-    <li>
-        <a href="/income/create">Create Page</a>
-    </li>
-    <li>
-        <a href="/income/update">Edit Page</a>
-    </li>
-</ul>
+<div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+    <a href="/income/create" class="btn btn-primary me-md-2">Create</a>
+    <a href="#" class="btn btn-primary">Upload</a>
+</div>
 {{ template "dataTable"}}
 {{ end }}

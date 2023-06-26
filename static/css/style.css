@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: "Poppins", Arial, sans-serif;
   font-size: 14px;
@@ -111,6 +117,7 @@ h5,
 /* custom components */
 
 #sidebar {
+  position: relative;
   min-width: 270px;
   max-width: 270px;
   background: #40407a;
@@ -250,17 +257,29 @@ a[data-toggle="collapse"] {
   transform: translateY(-50%);
 }
 
-@media (max-width: 991.98px) {
-  #sidebarCollapse span {
-    display: none;
-  }
+.logout-btn {
+  text-align: center;
+}
+
+#sidebar.active .logout-btn a {
+  padding: 4px;
+  font-size: 12px;
+  margin-bottom: 5px;
 }
 
 .footer {
   padding: 0 30px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  text-align: center;
 }
 
 @media (max-width: 991.98px) {
+  #sidebarCollapse span {
+    display: none;
+  }
+
   .footer {
     display: none;
   }
@@ -325,4 +344,123 @@ a[data-toggle="collapse"] {
 
 .dashboard-cards .card:last-child {
   color: #227093;
+}
+
+/* data table pagination */
+
+*:focus {
+  box-shadow: none !important;
+}
+
+.dataTables_info {
+  display: none;
+}
+
+ul.pagination .page-link {
+  color: #40407a;
+  border: none;
+}
+
+.active>.page-link,
+.page-link.active {
+  color: #fff !important;
+  background-color: #40407a;
+  border: none;
+}
+
+td .btn {
+  margin: 2px;
+}
+
+/* input form component */
+
+.required .form-label:after {
+  content: "*";
+  color: #e84118;
+  padding-left: 5px;
+}
+
+.auth-container {
+  max-width: 480px;
+  width: 100%;
+  padding: 15px 10px;
+  border: none;
+  border-radius: 10px;
+  -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.logout-sec {
+  background: #40407a;
+}
+
+.auth-container .form {
+  padding: 2rem;
+}
+
+#check:checked~.login,
+#check:checked~.registration {
+  display: block;
+}
+
+#check {
+  display: none;
+}
+
+.form header {
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form input {
+  height: 60px;
+  width: 100%;
+  padding: 0 15px;
+  font-size: 17px;
+  margin-bottom: 1.3rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+}
+
+.form input:focus {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.form a {
+  font-size: 16px;
+  color: #40407a;
+  text-decoration: none;
+}
+
+.form a:hover,
+.signup a:hover {
+  text-decoration: underline;
+}
+
+.form input.button {
+  color: #fff;
+  background: #40407a;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: 1.7rem;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.form input.button:hover {
+  background: #40407a;
+}
+
+.signup {
+  font-size: 17px;
+  text-align: center;
+}
+
+.signup a {
+  color: #40407a;
+  cursor: pointer;
 }

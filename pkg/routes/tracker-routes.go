@@ -1,6 +1,7 @@
 package routes
 
 import (
+	authcontroller "Go-PersonalFinanceTracker/pkg/controllers/auth"
 	budgetcontroller "Go-PersonalFinanceTracker/pkg/controllers/budget"
 	expcontroller "Go-PersonalFinanceTracker/pkg/controllers/expenses"
 	incontroller "Go-PersonalFinanceTracker/pkg/controllers/incomes"
@@ -8,6 +9,12 @@ import (
 
 	"github.com/gorilla/mux"
 )
+
+var RegisterAuthRoutes = func(router *mux.Router) {
+	router.HandleFunc("/", authcontroller.Login)
+	router.HandleFunc("/signup", authcontroller.Signup)
+	router.HandleFunc("/logout", authcontroller.LogoutConfrim)
+}
 
 var RegisterIncomeRoutes = func(router *mux.Router) {
 	router.HandleFunc("/incomes/", incontroller.GetIncomes)

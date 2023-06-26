@@ -3,10 +3,18 @@
 {{ define "content" }}
 <div class="container d-flex flex-wrap align-items-center mb-5 dashboard-cards">
     <div class="m-2 card">Available</div>
-    <div class="m-2 card">Income</div>
-    <div class="m-2 card">Expenses</div>
-    <div class="m-2 card">Giving Loan</div>
-    <div class="m-2 card">Receiving Loan</div>
+    <a href="/incomes/">
+        <div class="m-2 card">Income</div>
+    </a>
+    <a href="/expenses/">
+        <div class="m-2 card">Expenses</div>
+    </a>
+    <a href="/loan/give">
+        <div class="m-2 card">Giving Loan</div>
+    </a>
+    <a href="/loan/recieve">
+        <div class="m-2 card">Receiving Loan</div>
+    </a>
 </div>
 {{ template "dataTable" }}
 {{ end }}
