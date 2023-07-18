@@ -1,41 +1,33 @@
 package inservice
 
 import (
-	models "Go-PersonalFinanceTracker/pkg/models"
-	inrepo "Go-PersonalFinanceTracker/pkg/repository/incomes"
+	model "Go-PersonalFinanceTracker/pkg/models"
+	inrepository "Go-PersonalFinanceTracker/pkg/repository/incomes"
 	"errors"
 )
 
 var ErrIDIsNotValid = errors.New("Id is not valid")
 
-type IIncomeServices interface {
-	GetIncomes() ([]models.Income, error)
-	GetIncomeById() (models.Income, error)
-	CreateIncome() error
-	UpdateIncome() error
-	DeleteIncome() error
-}
-
 type IncomeService struct {
-	expRepo inrepo.IIncomeRepository
+	repository inrepository.IncomeRepository
 }
 
-func (i *IncomeService) GetIncomes() {
-
+func (s *IncomeService) GetIncomes() []model.Income {
+	return s.repository.GetIncomes()
 }
 
-func (i *IncomeService) GetIncomeById() {
-
-}
-
-func (i *IncomeService) CreateIncome() {
+func (s *IncomeService) GetIncomeById(id int) {
 
 }
 
-func (i *IncomeService) UpdateIncome() {
+func (s *IncomeService) CreateIncome(income model.Income) {
 
 }
 
-func (i *IncomeService) DeleteIncome() {
+func (s *IncomeService) UpdateIncome(id int, income model.Income) {
+
+}
+
+func (s *IncomeService) DeleteIncome(id int) {
 
 }

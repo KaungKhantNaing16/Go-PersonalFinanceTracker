@@ -1,46 +1,29 @@
 package budgetcontroller
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
-	"path/filepath"
-	"strings"
 )
 
-var tmpl = make(map[string]*template.Template)
-var fileNames []string
+var tmpl *template.Template
 
 func loadTemplates() {
 	templatePartialDir := "templates/partials/"
-	templatesDir := "templates/budget/"
-	pattern := templatesDir + "*.html"
-	matches, err := filepath.Glob(pattern)
-	if err != nil {
-		fmt.Printf("%s error occurred while get template name.", err)
-		return
-	}
+	templateDir := "templates/budget/"
 
-	for _, match := range matches {
-		fileName := filepath.Base(strings.TrimSuffix(match, ".html"))
-		fileNames = append(fileNames, fileName)
-	}
-
-	for index, name := range fileNames {
-		t, err := template.ParseFiles(templatePartialDir+"layout.html", templatePartialDir+"dataTable.html", templatesDir+name+".html")
-		if err == nil {
-			tmpl[name] = t
-			fmt.Println("Load Template", index, name)
-		} else {
-			fmt.Printf("%s error occurred while parse files.", err)
-			return
-		}
-	}
+	tmpl = template.Must(template.ParseFiles(
+		templatePartialDir+"sideBar.html",
+		templatePartialDir+"dataTable.html",
+		templatePartialDir+"js.html",
+		templatePartialDir+"css.html",
+		templateDir+"budget.html",
+	))
 }
 
 func GetBudgetsList(writer http.ResponseWriter, request *http.Request) {
 	loadTemplates()
-	err := tmpl["budget"].Execute(writer, nil)
+	ttl := "Budget List"
+	err := tmpl.ExecuteTemplate(writer, "budget.html", ttl)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

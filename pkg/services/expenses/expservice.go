@@ -1,27 +1,19 @@
 package expservice
 
 import (
-	models "Go-PersonalFinanceTracker/pkg/models"
-	exprepo "Go-PersonalFinanceTracker/pkg/repository/expenses"
+	model "Go-PersonalFinanceTracker/pkg/models"
+	exprepository "Go-PersonalFinanceTracker/pkg/repository/expenses"
 	"errors"
 )
 
 var ErrIDIsNotValid = errors.New("Id is not valid")
 
-type IExpensesServices interface {
-	GetExpenses() ([]models.Expenses, error)
-	GetExpensesById(id int) (models.Expenses, error)
-	CreateExpenses(expenses models.Expenses) error
-	UpdateExpenses(id int, expenses models.Expenses) error
-	DeleteExpenses(id int) error
-}
-
 type ExpensesService struct {
-	expRepo exprepo.IExpensesRepository
+	expRepo exprepository.ExpensesRepository
 }
 
-func (e *ExpensesService) GetExpenses() {
-
+func (e *ExpensesService) GetExpenses() []model.Expenses {
+	return e.expRepo.GetExpenses()
 }
 
 func (e *ExpensesService) GetExpensesById() {

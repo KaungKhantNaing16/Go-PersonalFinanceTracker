@@ -1,26 +1,41 @@
-package exprepo
+package exprepository
 
 import (
-	models "Go-PersonalFinanceTracker/pkg/models"
+	"Go-PersonalFinanceTracker/config"
+	model "Go-PersonalFinanceTracker/pkg/models"
 	"errors"
+	"log"
 )
 
 var ErrExpensesNotFound = errors.New("FromRepository - expenses not found")
 
-type IExpensesRepository interface {
-	GetExpenses() ([]models.Expenses, error)
-	GetExpensesById(id int) (models.Expenses, error)
-	CreateExpenses(expenses models.Expenses) error
-	UpdateExpenses(id int, expenses models.Expenses) error
-	DeleteExpenses(id int) error
-}
+type ExpensesRepository struct{}
 
-type ExpensesRepository struct {
-	Expenses []models.Expenses
-}
+// Retrieve the list of Incomes record from the database
+func (i *ExpensesRepository) GetExpenses() []model.Expenses {
+	DB := config.NewDatabase()
 
-func (e *ExpensesRepository) GetExpenses() {
-	// Retrieve the list of expenses record from the database
+	rows, err := DB.Query("SELECT * FROM expenses")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var expenses []model.Expenses
+	for rows.Next() {
+		var exp model.Expenses
+		err := rows.Scan(&exp.ID, &exp.UserID, &exp.CateID, &exp.Title, &exp.Amount, &exp.Description, &exp.Date, &exp.CreatedAt, &exp.UpdatedAt)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		expenses = append(expenses, exp)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return expenses
 }
 
 func (e *ExpensesRepository) GetExpensesById() {
