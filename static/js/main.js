@@ -1,7 +1,10 @@
+$(document).ready(function () {
+    $('#example').DataTable();
+});
+
 (function($) {
 
 	"use strict";
-
 	var fullHeight = function() {
 
 		$('.js-fullheight').css('height', $(window).height());
@@ -14,6 +17,6 @@
 
 	$('#sidebarCollapse').on('click', function () {
       $('#sidebar').toggleClass('active');
-  });
+  	});
 
 })(jQuery);

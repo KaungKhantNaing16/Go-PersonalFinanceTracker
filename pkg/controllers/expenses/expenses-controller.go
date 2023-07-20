@@ -3,10 +3,10 @@ package expcontroller
 import (
 	expservice "Go-PersonalFinanceTracker/pkg/services/expenses"
 	"fmt"
+	"html/template"
 	"net/http"
 	"path/filepath"
 	"strings"
-	"text/template"
 )
 
 var tmpl = make(map[string]*template.Template)
@@ -17,6 +17,7 @@ type expensesHandler struct {
 }
 
 func loadTemplates() {
+	templatePartialDir := "templates/partials/"
 	templatesDir := "templates/expenses/"
 	pattern := templatesDir + "*.html"
 	matches, err := filepath.Glob(pattern)
@@ -31,7 +32,7 @@ func loadTemplates() {
 	}
 
 	for index, name := range fileNames {
-		t, err := template.ParseFiles("templates/partials/layout.html", templatesDir+name+".html")
+		t, err := template.ParseFiles(templatePartialDir+"layout.html", templatePartialDir+"dataTable.html", templatesDir+name+".html")
 		if err == nil {
 			tmpl[name] = t
 			fmt.Println("Load Template", index, name)
@@ -71,7 +72,7 @@ func CreateExpenses(writer http.ResponseWriter, request *http.Request) {
 
 func UpdateExpenses(writer http.ResponseWriter, request *http.Request) {
 	loadTemplates()
-	err := tmpl["update"].Execute(writer, nil)
+	err := tmpl["edit"].Execute(writer, nil)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

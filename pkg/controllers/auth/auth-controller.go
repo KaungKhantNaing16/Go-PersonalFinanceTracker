@@ -1,4 +1,4 @@
-package incontroller
+package authcontroller
 
 import (
 	"fmt"
@@ -12,8 +12,7 @@ var tmpl = make(map[string]*template.Template)
 var fileNames []string
 
 func loadTemplates() {
-	templatePartialDir := "templates/partials/"
-	templatesDir := "templates/incomes/"
+	templatesDir := "templates/auth/"
 	pattern := templatesDir + "*.html"
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
@@ -27,7 +26,7 @@ func loadTemplates() {
 	}
 
 	for index, name := range fileNames {
-		t, err := template.ParseFiles(templatePartialDir+"layout.html", templatePartialDir+"dataTable.html", templatesDir+name+".html")
+		t, err := template.ParseFiles(templatesDir + name + ".html")
 		if err == nil {
 			tmpl[name] = t
 			fmt.Println("Load Template", index, name)
@@ -38,45 +37,27 @@ func loadTemplates() {
 	}
 }
 
-func GetIncomes(writer http.ResponseWriter, request *http.Request) {
+func Login(writer http.ResponseWriter, request *http.Request) {
 	loadTemplates()
-	err := tmpl["list"].Execute(writer, nil)
+	err := tmpl["login"].Execute(writer, nil)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-func GetIncomeById(writer http.ResponseWriter, request *http.Request) {
+func Signup(writer http.ResponseWriter, request *http.Request) {
 	loadTemplates()
-	err := tmpl["detail"].Execute(writer, nil)
+	err := tmpl["signup"].Execute(writer, nil)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-func CreateIncome(writer http.ResponseWriter, request *http.Request) {
+func LogoutConfrim(writer http.ResponseWriter, request *http.Request) {
 	loadTemplates()
-	err := tmpl["create"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func UpdateIncome(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["edit"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func DeleteIncome(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["index"].Execute(writer, nil)
+	err := tmpl["logout-confirm"].Execute(writer, nil)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

@@ -1,4 +1,4 @@
-package incontroller
+package loancontroller
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ var fileNames []string
 
 func loadTemplates() {
 	templatePartialDir := "templates/partials/"
-	templatesDir := "templates/incomes/"
+	templatesDir := "templates/loan/"
 	pattern := templatesDir + "*.html"
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
@@ -38,45 +38,18 @@ func loadTemplates() {
 	}
 }
 
-func GetIncomes(writer http.ResponseWriter, request *http.Request) {
+func GetGiveLoan(writer http.ResponseWriter, request *http.Request) {
 	loadTemplates()
-	err := tmpl["list"].Execute(writer, nil)
+	err := tmpl["giveList"].Execute(writer, nil)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-func GetIncomeById(writer http.ResponseWriter, request *http.Request) {
+func GetReceiveLoan(writer http.ResponseWriter, request *http.Request) {
 	loadTemplates()
-	err := tmpl["detail"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func CreateIncome(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["create"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func UpdateIncome(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["edit"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func DeleteIncome(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["index"].Execute(writer, nil)
+	err := tmpl["receiveList"].Execute(writer, nil)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
