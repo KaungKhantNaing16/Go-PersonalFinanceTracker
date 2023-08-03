@@ -11,37 +11,38 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var RegisterAuthRoutes = func(router *mux.Router) {
+func RegisterRoutes(router *mux.Router) {
+
+	// RegisterIncomeRoutes
+	router.HandleFunc("/incomes", incontroller.GetIncomes).Methods("GET")
+	// router.HandleFunc("/income/create", incontroller.CreateIncome).Methods("GET")
+	// router.HandleFunc("/income/:id", incontroller.GetIncomeById).Methods("GET")
+	// router.HandleFunc("/income/:id", incontroller.UpdateIncome).Methods("PUT")
+	// router.HandleFunc("/income/:id", incontroller.DeleteIncome).Methods("DELETE")
+
+	// RegisterExpensesRoutes
+	router.HandleFunc("/expenses", expcontroller.GetExpenses).Methods("GET")
+	router.HandleFunc("/expenses/create", expcontroller.CreateExpenses).Methods("GET")
+	router.HandleFunc("/expenses/{id}", expcontroller.GetExpenseDetail).Methods("GET")
+	router.HandleFunc("/expenses/edit/{id}", expcontroller.EditExpenses).Methods("GET")
+	router.HandleFunc("/expenses/confirm", expcontroller.ConfirmExpense).Methods("POST")
+	router.HandleFunc("/expenses/submit", expcontroller.SubmitExpenses).Methods("POST")
+
+	// RegisterBudgetRoutes
+	router.HandleFunc("/budget", budgetcontroller.GetBudgetsList)
+
+	// RegisterLoanRoutes
+	router.HandleFunc("/loan/give", loancontroller.GetGiveLoan)
+	router.HandleFunc("/loan/recieve", loancontroller.GetReceiveLoan)
+
+	// RegisterMediaRoutes
+	router.HandleFunc("/media", mediacontroller.GetMedia)
+
+	// RegisterAuthRoutes
 	router.HandleFunc("/", authcontroller.Login)
 	router.HandleFunc("/signup", authcontroller.Signup)
 	router.HandleFunc("/logout", authcontroller.LogoutConfrim)
-}
 
-var RegisterIncomeRoutes = func(router *mux.Router) {
-	router.HandleFunc("/incomes/", incontroller.GetIncomes)
-	router.HandleFunc("/income/create", incontroller.CreateIncome)
-	router.HandleFunc("/income/detail", incontroller.GetIncomeById)
-	router.HandleFunc("/income/update", incontroller.UpdateIncome)
-	router.HandleFunc("/income/delete", incontroller.DeleteIncome)
-}
-
-var RegisterExpensesRoutes = func(router *mux.Router) {
-	router.HandleFunc("/expenses/", expcontroller.GetExpenses)
-	router.HandleFunc("/expenses/create", expcontroller.CreateExpenses)
-	router.HandleFunc("/expenses/detail", expcontroller.GetExpensesById)
-	router.HandleFunc("/expenses/update", expcontroller.UpdateExpenses)
-	router.HandleFunc("/expenses/delete", expcontroller.DeleteExpenses)
-}
-
-var RegisterLoanRoutes = func(router *mux.Router) {
-	router.HandleFunc("/loan/give", loancontroller.GetGiveLoan)
-	router.HandleFunc("/loan/recieve", loancontroller.GetReceiveLoan)
-}
-
-var RegisterBudgetRoutes = func(router *mux.Router) {
-	router.HandleFunc("/budget", budgetcontroller.GetBudgetsList)
-}
-
-var RegisterMediaRoutes = func(router *mux.Router) {
-	router.HandleFunc("/media", mediacontroller.GetMedia)
+	//RegisterCategoriesRoutes
+	// router.HandleFunc("/expenses/create", catecontroller.GetCategories).Methods("GET")
 }

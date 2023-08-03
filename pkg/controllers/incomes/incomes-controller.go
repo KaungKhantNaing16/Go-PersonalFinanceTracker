@@ -1,84 +1,69 @@
 package incontroller
 
 import (
-	"fmt"
+	inservice "Go-PersonalFinanceTracker/pkg/services/incomes"
 	"html/template"
 	"net/http"
-	"path/filepath"
-	"strings"
 )
 
-var tmpl = make(map[string]*template.Template)
-var fileNames []string
+var tmpl *template.Template
 
-func loadTemplates() {
+func loadTemplates(fileName string) {
 	templatePartialDir := "templates/partials/"
 	templatesDir := "templates/incomes/"
-	pattern := templatesDir + "*.html"
-	matches, err := filepath.Glob(pattern)
-	if err != nil {
-		fmt.Printf("%s error occurred while get template name.", err)
-		return
-	}
 
-	for _, match := range matches {
-		fileName := filepath.Base(strings.TrimSuffix(match, ".html"))
-		fileNames = append(fileNames, fileName)
-	}
-
-	for index, name := range fileNames {
-		t, err := template.ParseFiles(templatePartialDir+"layout.html", templatePartialDir+"dataTable.html", templatesDir+name+".html")
-		if err == nil {
-			tmpl[name] = t
-			fmt.Println("Load Template", index, name)
-		} else {
-			fmt.Printf("%s error occurred while parse files.", err)
-			return
-		}
-	}
+	tmpl = template.Must(template.ParseFiles(
+		templatePartialDir+"sideBar.html",
+		templatePartialDir+"js.html",
+		templatePartialDir+"css.html",
+		templatesDir+fileName+".html",
+	))
 }
+
+var incomeService = inservice.IncomeService{}
 
 func GetIncomes(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["list"].Execute(writer, nil)
+	incomes := incomeService.GetIncomes()
+	loadTemplates("list")
+	err := tmpl.ExecuteTemplate(writer, "list.html", incomes)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-func GetIncomeById(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["detail"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
+// func GetIncomeById(writer http.ResponseWriter, request *http.Request) {
+// 	loadTemplates()
+// 	err := tmpl["detail"].Execute(writer, nil)
+// 	if err != nil {
+// 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// }
 
-func CreateIncome(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["create"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
+// func CreateIncome(writer http.ResponseWriter, request *http.Request) {
+// 	loadTemplates()
+// 	err := tmpl["create"].Execute(writer, nil)
+// 	if err != nil {
+// 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// }
 
-func UpdateIncome(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["edit"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
+// func UpdateIncome(writer http.ResponseWriter, request *http.Request) {
+// 	loadTemplates()
+// 	err := tmpl["edit"].Execute(writer, nil)
+// 	if err != nil {
+// 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// }
 
-func DeleteIncome(writer http.ResponseWriter, request *http.Request) {
-	loadTemplates()
-	err := tmpl["index"].Execute(writer, nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
+// func DeleteIncome(writer http.ResponseWriter, request *http.Request) {
+// 	loadTemplates()
+// 	err := tmpl["index"].Execute(writer, nil)
+// 	if err != nil {
+// 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// }

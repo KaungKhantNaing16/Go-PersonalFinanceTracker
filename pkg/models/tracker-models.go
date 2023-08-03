@@ -22,27 +22,18 @@ type UserDetail struct {
 
 // Income struct
 type Income struct {
-	ID          int
-	UserID      int
-	Title       string
-	Amount      int
-	Description string
-	FileURL     string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID, UserID, Amount   int
+	Title                string
+	Description          string
+	FileURL              string
+	CreatedAt, UpdatedAt time.Time
 }
 
 // Expenses struct
 type Expenses struct {
-	ID          int
-	UserID      int
-	CateID      int
-	Title       string
-	Amount      int
-	Description string
-	Date        time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID, UserID, CateID, Amount int
+	Title, Description         string
+	Date, CreatedAt, UpdatedAt time.Time
 }
 
 // Category struct
@@ -53,7 +44,7 @@ type Category struct {
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	DeletedAt   time.Time
+	DeletedAt   any
 }
 
 // Loan struct

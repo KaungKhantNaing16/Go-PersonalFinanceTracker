@@ -1,39 +1,37 @@
-{{ define "title" }}Expneses Detail{{ end }}
-{{ define "pageTtl" }}Expneses Detail{{ end }}
-{{ define "content" }}
-<ul class="list-group">
-    <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-        <div class="fw-bold">Title</div>
-            Chillin with my homies
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses | Details</title>
+    {{ template "css" }}
+</head>
+<body>
+    <div class="wrapper d-flex align-items-stretch">
+        {{ template "sidebar" }}
+        <div id="content" class="p-4 p-md-5">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                        <i class="fa fa-bars"></i>
+                        <span class="sr-only">Toggle Menu</span>
+                    </button>
+                    <h2 class="mx-2">Expense Details</h2>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div> 
+            </nav>  
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Title : <b>{{.Title}}</b></li>
+                <li class="list-group-item">Category : <b>{{.CateID}}</b></li>
+                <li class="list-group-item">Amount : <b>{{.Amount}}</b></li>
+                <li class="list-group-item">Description : <b>{{.Description}}</b></li>
+                <li class="list-group-item">Date : <b>{{.Date}}</b></li>
+            </ul>
         </div>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-        <div class="fw-bold">Description</div>
-            We're celebrated after JLPT.
-        </div>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-        <div class="fw-bold">Amount</div>
-        $170,750
-        </div>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-            <div class="fw-bold mb-2">Files</div>
-            <div class="row g-2">
-                <div class="col mb-2">
-                  <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp"
-                    alt="image 1" class="w-100 rounded-3">
-                </div>
-                <div class="col mb-2">
-                  <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp"
-                    alt="image 1" class="w-100 rounded-3">
-                </div>
-            </div>
-        </div>
-    </li>
-</ul>
-{{ end }}
+    </div>
+    {{ template "js" }}
+</body>
+</html>

@@ -2,8 +2,8 @@ package main
 
 import (
 	"Go-PersonalFinanceTracker/pkg/routes"
-	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -11,9 +11,19 @@ import (
 
 func dashboardHandler(writer http.ResponseWriter, req *http.Request) {
 	templatePartialDir := "templates/partials/"
-	tmpl := template.Must(template.ParseFiles(templatePartialDir+"layout.html", templatePartialDir+"dataTable.html", "templates/index.html"))
+	tmpl, err := template.ParseFiles(
+		templatePartialDir+"sideBar.html",
+		templatePartialDir+"js.html",
+		templatePartialDir+"css.html",
+		"templates/index.html",
+	)
 
-	err := tmpl.ExecuteTemplate(writer, "layout.html", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ttl := "Dashboard"
+	err = tmpl.ExecuteTemplate(writer, "index.html", ttl)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -21,18 +31,14 @@ func dashboardHandler(writer http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	// Initialize the router
 	r := mux.NewRouter()
 
 	fs := http.FileServer(http.Dir("static/"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
 	r.HandleFunc("/dashboard", dashboardHandler)
-	routes.RegisterAuthRoutes(r)
-	routes.RegisterExpensesRoutes(r)
-	routes.RegisterIncomeRoutes(r)
-	routes.RegisterLoanRoutes(r)
-	routes.RegisterBudgetRoutes(r)
-	routes.RegisterMediaRoutes(r)
-	err := http.ListenAndServe(":8080", r)
-	fmt.Println(err)
+	routes.RegisterRoutes(r)
+
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
