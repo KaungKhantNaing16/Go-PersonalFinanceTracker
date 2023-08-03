@@ -8,12 +8,8 @@ import (
 var tmpl *template.Template
 
 func loadTemplates(fileName string) {
-	// templatePartialDir := "templates/partials/"
 	templatesDir := "templates/auth/"
-
 	tmpl = template.Must(template.ParseFiles(
-		// templatePartialDir+"js.html",
-		// templatePartialDir+"css.html",
 		templatesDir + fileName + ".html",
 	))
 }

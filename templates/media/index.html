@@ -17,13 +17,25 @@
                         <i class="fa fa-bars"></i>
                         <span class="sr-only">Toggle Menu</span>
                     </button>
-                    <h2 class="mx-2">{{ . }}</h2>
+                    <h2 class="mx-2">Media</h2>
                     <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa fa-bars"></i>
                     </button>
                 </div> 
             </nav>
-           Media List
+            <section class="bg-diffrent">
+                <div class="container img-upload">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="verify-sub-box">
+                                 <div class="file-loading">
+                                     <input id="multiplefileupload" type="file" accept=".jpg,.gif,.png" multiple>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
     {{ template "js" }}

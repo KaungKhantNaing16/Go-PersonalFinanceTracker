@@ -17,7 +17,7 @@
                         <i class="fa fa-bars"></i>
                         <span class="sr-only">Toggle Menu</span>
                     </button>
-                    <h2 class="mx-2">{{ . }}</h2>
+                    <h2 class="mx-2">Expenses</h2>
                     <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa fa-bars"></i>
                     </button>
@@ -33,25 +33,27 @@
                         <th>Title</th>
                         <th>Description</th>
                         <th>Amount</th>
-                        <th>FileURL</th>
+                        <th>Date</th>
                         <th>Create date</th>
                         <th>Update date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {{ range . }}
                     <tr>
-                        <td>Title</td>
-                        <td>Description</td>
-                        <td>Amount</td>
-                        <td>FileURL</td>
-                        <td>Create date</td>
-                        <td>Update date</td>
+                        <td>{{.Title}}</td>
+                        <td>{{.Description}}</td>
+                        <td>{{.Amount}}</td>
+                        <td>{{.Date}}</td>
+                        <td>{{.CreatedAt}}</td>
+                        <td>{{.UpdatedAt}}</td>
                         <td>
-                            <a href="/expenses/detail" class="btn btn-success btn-sm">Detail</a>
-                            <a href="/expenses/update" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/expenses/{{.ID}}" class="btn btn-success btn-sm action-btn">Detail</a>
+                            <a href="/expenses/edit/{{.ID}}" class="btn btn-warning btn-sm action-btn">Edit</a>
                         </td>
                     </tr>
+                    {{ end }}
                 </tbody>
             </table>
         </div>

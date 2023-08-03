@@ -2,6 +2,12 @@ $(document).ready(function () {
     $('#example').DataTable();
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+	flatpickr("#datepicker", {
+		dateFormat: "Y-m-d", // Change this to match the date format you want to use (YYYY-MM-DD in this case)
+	});
+});
+
 (function($) {
 
 	"use strict";
@@ -20,3 +26,4 @@ $(document).ready(function () {
   	});
 
 })(jQuery);
+
