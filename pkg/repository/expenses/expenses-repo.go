@@ -70,9 +70,8 @@ func (e *ExpensesRepository) CreateExpenses(expenses model.Expenses) error {
 	return nil
 }
 
-func (e *ExpensesRepository) UpdateExpenses(Id int, expenses model.Expenses) error {
-	fmt.Println(Id)
-	oldExp, err := e.GetExpensesById(Id)
+func (e *ExpensesRepository) UpdateExpenses(expenses model.Expenses) error {
+	oldExp, err := e.GetExpensesById(expenses.ID)
 	if err != nil {
 		return ErrExpensesNotFound
 	}
@@ -91,8 +90,4 @@ func (e *ExpensesRepository) UpdateExpenses(Id int, expenses model.Expenses) err
 	}
 	fmt.Println("Passed Repository")
 	return nil
-}
-
-func (e *ExpensesRepository) DeleteExpenses() {
-	// Delete the expenses record from the database
 }

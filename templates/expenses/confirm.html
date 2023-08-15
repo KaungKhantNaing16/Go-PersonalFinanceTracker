@@ -24,7 +24,9 @@
                 </div> 
             </nav>
             <form class="create-from" action="/expenses/submit" method="post">
+                {{ if .ID }}
                 <input type="hidden" id="exp_id" name="exp_id" value="{{.ID}}" />
+                {{ end }}
                 <input type="hidden" id="user_id" name="user_id" value="{{.UserID}}" />
                 <div class="mb-3 required">
                     <label for="title" class="form-label">Title</label>
@@ -50,7 +52,7 @@
                 </div>
                 
                 <div class="btn-group mt-5">
-                    <button type="button" class="btn btn-danger me-2" onclick="window.history.back()">Back</button>
+                    <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()" id="backBtn">Back</button>
                     <input type="submit" class="btn btn-primary" value="Submit">
                 </div>
             </form>

@@ -1,11 +1,19 @@
 package budgetcontroller
 
 import (
+	model "Go-PersonalFinanceTracker/pkg/models"
+	budgetservice "Go-PersonalFinanceTracker/pkg/services/budget"
+	"errors"
 	"html/template"
+	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 var tmpl *template.Template
+var ErrIDIsNotValid = errors.New("Id is not valid")
 
 func loadTemplates() {
 	templatePartialDir := "templates/partials/"
@@ -20,12 +28,61 @@ func loadTemplates() {
 	))
 }
 
+var budgetPlanService = budgetservice.BudgetService{}
+
 func GetBudgetsList(writer http.ResponseWriter, request *http.Request) {
+	budgetPlan := budgetPlanService.GetBudgetsList()
+
 	loadTemplates()
-	ttl := "Budget List"
-	err := tmpl.ExecuteTemplate(writer, "budget.html", ttl)
+	err := tmpl.ExecuteTemplate(writer, "budget.html", budgetPlan)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func CreateBudgetPlan(writer http.ResponseWriter, request *http.Request) {
+	if request.Method != http.MethodPost {
+		http.Error(writer, "Invalid Request Method", http.StatusBadRequest)
+		return
+	}
+
+	if err := request.ParseForm(); err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	amount, err := strconv.Atoi(request.FormValue("amount"))
+	if err != nil {
+		http.Error(writer, "Invalid Amount value", http.StatusMethodNotAllowed)
+		return
+	}
+
+	budgetPlan := model.Budget{
+		Title:    request.FormValue("title"),
+		Category: request.FormValue("category"),
+		Amount:   amount,
+	}
+
+	if err = budgetPlanService.CreateBudgetPlan(budgetPlan); err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(writer, request, "/budget", http.StatusFound)
+}
+
+func DeleteBudgetPlan(writer http.ResponseWriter, request *http.Request) {
+	params := mux.Vars(request)
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		log.Fatal(ErrIDIsNotValid)
+	}
+
+	if err = budgetPlanService.DeleteBudgetPlan(id); err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(writer, request, "/budget", http.StatusFound)
 }

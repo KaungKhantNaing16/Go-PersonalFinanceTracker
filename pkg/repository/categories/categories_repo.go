@@ -4,9 +4,27 @@ import (
 	"Go-PersonalFinanceTracker/config"
 	model "Go-PersonalFinanceTracker/pkg/models"
 	"log"
+	"time"
 )
 
 type CategoriesRepository struct{}
+
+func (c *CategoriesRepository) CreateCategory(category string) error {
+	defStatus := 1
+	defDesc := "これは、カテゴリのデフォルトの説明です。"
+	currentDateTime := time.Now()
+	CreateAt := currentDateTime
+	UpdatedAt := currentDateTime
+
+	DB := config.NewDatabase()
+	query := "INSERT INTO categories (status, title, description, created_at, updated_at) VALUES (?, ?, ?, ?, ?)"
+	_, err := DB.Exec(query, defStatus, category, defDesc, CreateAt, UpdatedAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func (c *CategoriesRepository) GetCategories() ([]model.Category, error) {
 	DB := config.NewDatabase()

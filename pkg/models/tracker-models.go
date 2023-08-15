@@ -31,9 +31,9 @@ type Income struct {
 
 // Expenses struct
 type Expenses struct {
-	ID, UserID, CateID, Amount int
-	Title, Description         string
-	Date, CreatedAt, UpdatedAt time.Time
+	ID, UserID, CateID, Amount   int
+	Title, Description, CateName string
+	Date, CreatedAt, UpdatedAt   time.Time
 }
 
 // Category struct
@@ -50,7 +50,7 @@ type Category struct {
 // Loan struct
 type Loan struct {
 	ID          int
-	Title       int
+	Title       string
 	Description string
 	Amount      int
 	CreatedAt   time.Time
@@ -59,10 +59,11 @@ type Loan struct {
 
 // Budget struct
 type Budget struct {
-	ID          int
-	Title       int
-	Description string
-	Amount      int
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID        int
+	Title     string
+	Category  string
+	Amount    int
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt any
 }

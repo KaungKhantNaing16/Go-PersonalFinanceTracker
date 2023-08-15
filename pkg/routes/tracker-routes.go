@@ -5,20 +5,19 @@ import (
 	budgetcontroller "Go-PersonalFinanceTracker/pkg/controllers/budget"
 	expcontroller "Go-PersonalFinanceTracker/pkg/controllers/expenses"
 	incontroller "Go-PersonalFinanceTracker/pkg/controllers/incomes"
-	loancontroller "Go-PersonalFinanceTracker/pkg/controllers/loan"
 	mediacontroller "Go-PersonalFinanceTracker/pkg/controllers/media"
 
 	"github.com/gorilla/mux"
 )
 
 func RegisterRoutes(router *mux.Router) {
-
 	// RegisterIncomeRoutes
 	router.HandleFunc("/incomes", incontroller.GetIncomes).Methods("GET")
-	// router.HandleFunc("/income/create", incontroller.CreateIncome).Methods("GET")
-	// router.HandleFunc("/income/:id", incontroller.GetIncomeById).Methods("GET")
-	// router.HandleFunc("/income/:id", incontroller.UpdateIncome).Methods("PUT")
-	// router.HandleFunc("/income/:id", incontroller.DeleteIncome).Methods("DELETE")
+	router.HandleFunc("/incomes/upload", incontroller.HandleUploadFile).Methods("POST")
+	router.HandleFunc("/incomes/{id}", incontroller.GetIncomeDetail).Methods("GET")
+	router.HandleFunc("/incomes/edit/{id}", incontroller.EditIncome)
+	router.HandleFunc("/incomes/confirm", incontroller.ConfirmIncome).Methods("POST")
+	router.HandleFunc("/incomes/submit", incontroller.SubmitIncome).Methods("POST")
 
 	// RegisterExpensesRoutes
 	router.HandleFunc("/expenses", expcontroller.GetExpenses).Methods("GET")
@@ -29,20 +28,16 @@ func RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/expenses/submit", expcontroller.SubmitExpenses).Methods("POST")
 
 	// RegisterBudgetRoutes
-	router.HandleFunc("/budget", budgetcontroller.GetBudgetsList)
-
-	// RegisterLoanRoutes
-	router.HandleFunc("/loan/give", loancontroller.GetGiveLoan)
-	router.HandleFunc("/loan/recieve", loancontroller.GetReceiveLoan)
+	router.HandleFunc("/budget", budgetcontroller.GetBudgetsList).Methods("GET")
+	router.HandleFunc("/budget/create", budgetcontroller.CreateBudgetPlan).Methods("POST")
+	router.HandleFunc("/budget/delete/{id}", budgetcontroller.DeleteBudgetPlan).Methods("GET")
 
 	// RegisterMediaRoutes
-	router.HandleFunc("/media", mediacontroller.GetMedia)
+	router.HandleFunc("/media", mediacontroller.GetMedia).Methods("GET")
+	router.HandleFunc("/media/upload", mediacontroller.HandleUploadFile).Methods("POST")
 
 	// RegisterAuthRoutes
 	router.HandleFunc("/", authcontroller.Login)
 	router.HandleFunc("/signup", authcontroller.Signup)
 	router.HandleFunc("/logout", authcontroller.LogoutConfrim)
-
-	//RegisterCategoriesRoutes
-	// router.HandleFunc("/expenses/create", catecontroller.GetCategories).Methods("GET")
 }

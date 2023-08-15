@@ -12,6 +12,10 @@ type CategoriesService struct {
 	cateRepo cateRepositroy.CategoriesRepository
 }
 
+func (c *CategoriesService) CreateCategory(category string) error {
+	return c.cateRepo.CreateCategory(category)
+}
+
 func (c *CategoriesService) GetCategories() ([]model.Category, error) {
 	return c.cateRepo.GetCategories()
 }
