@@ -3,14 +3,19 @@ package routes
 import (
 	authcontroller "Go-PersonalFinanceTracker/pkg/controllers/auth"
 	budgetcontroller "Go-PersonalFinanceTracker/pkg/controllers/budget"
+	dashboardcontroller "Go-PersonalFinanceTracker/pkg/controllers/dashboard"
 	expcontroller "Go-PersonalFinanceTracker/pkg/controllers/expenses"
 	incontroller "Go-PersonalFinanceTracker/pkg/controllers/incomes"
 	mediacontroller "Go-PersonalFinanceTracker/pkg/controllers/media"
+	userscontroller "Go-PersonalFinanceTracker/pkg/controllers/users"
 
 	"github.com/gorilla/mux"
 )
 
 func RegisterRoutes(router *mux.Router) {
+	// RegisterDashboardRoutes
+	router.HandleFunc("/dashboard", dashboardcontroller.DashboardHandler)
+
 	// RegisterIncomeRoutes
 	router.HandleFunc("/incomes", incontroller.GetIncomes).Methods("GET")
 	router.HandleFunc("/incomes/upload", incontroller.HandleUploadFile).Methods("POST")
@@ -40,4 +45,7 @@ func RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/", authcontroller.Login)
 	router.HandleFunc("/signup", authcontroller.Signup)
 	router.HandleFunc("/logout", authcontroller.LogoutConfrim)
+
+	// RegisterUserRoutes
+	router.HandleFunc("/register", userscontroller.Registration)
 }

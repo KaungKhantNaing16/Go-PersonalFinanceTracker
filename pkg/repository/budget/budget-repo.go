@@ -54,6 +54,18 @@ func (b *BudgetRepository) CreateBudgetPlan(budgetPlan model.Budget) error {
 	return nil
 }
 
+func (b *BudgetRepository) GetBudgetPlanById(id int) (model.Budget, error) {
+	DB := config.NewDatabase()
+	row := DB.QueryRow("SELECT * FROM budget WHERE id = ?", id)
+	var budget model.Budget
+	err := row.Scan(&budget.ID, &budget.Title, &budget.Category, &budget.Amount, &budget.CreatedAt, &budget.UpdatedAt, &budget.DeletedAt)
+	if err != nil {
+		return model.Budget{}, err
+	}
+
+	return budget, nil
+}
+
 func (b *BudgetRepository) DeleteBudgetPlan(id int) error {
 	DB := config.NewDatabase()
 	query := "DELETE FROM budget WHERE id = ?"

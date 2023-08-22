@@ -91,3 +91,40 @@ func (e *ExpensesRepository) UpdateExpenses(expenses model.Expenses) error {
 	fmt.Println("Passed Repository")
 	return nil
 }
+
+func (e *ExpensesRepository) GetTotalAmount() (int, error) {
+	var totalAmount int
+	DB := config.NewDatabase()
+	row := DB.QueryRow("SELECT SUM(amount) FROM expenses")
+
+	if err := row.Scan(&totalAmount); err != nil {
+		if err == sql.ErrNoRows {
+			return totalAmount, err
+		}
+	}
+
+	return totalAmount, nil
+}
+
+func (e *ExpensesRepository) GetTotalAmountByCate(cateID int) (model.CateTotalAmount, error) {
+	var cateAmount model.CateTotalAmount
+
+	if cateID == 0 {
+		log.Fatal("Invalid category Id value")
+	}
+
+	DB := config.NewDatabase()
+	query := "SELECT budget.category AS category, SUM(expenses.amount) AS total_amount, budget.amount AS budget_amount FROM expenses INNER JOIN categories ON expenses.cate_id = categories.id INNER JOIN budget ON categories.title = budget.category WHERE expenses.cate_id = ?"
+	row := DB.QueryRow(query, cateID)
+
+	if err := row.Scan(&cateAmount.Category, &cateAmount.TotalAmount, &cateAmount.BudgetAmount); err != nil {
+		if err == sql.ErrNoRows {
+			return cateAmount, err
+		}
+	}
+
+	fmt.Print("In Repository:")
+	fmt.Println(cateAmount)
+
+	return cateAmount, nil
+}

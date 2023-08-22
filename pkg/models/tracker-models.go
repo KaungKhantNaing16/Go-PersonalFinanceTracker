@@ -10,14 +10,10 @@ type User struct {
 
 // UserDetail struct
 type UserDetail struct {
-	ID        int
-	UserID    int
-	Name      string
-	Email     string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	ID, Status                     int
+	Name, Email, Profile, Password string
+	CreatedAt, UpdatedAt           time.Time
+	DeletedAt                      any
 }
 
 // Income struct
@@ -47,14 +43,10 @@ type Category struct {
 	DeletedAt   any
 }
 
-// Loan struct
-type Loan struct {
-	ID          int
-	Title       string
-	Description string
-	Amount      int
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+// CateTotalAmount struct
+type CateTotalAmount struct {
+	Category                  string
+	TotalAmount, BudgetAmount int
 }
 
 // Budget struct

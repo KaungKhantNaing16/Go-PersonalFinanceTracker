@@ -92,3 +92,17 @@ func (i *IncomeRepository) UpdateIncome(income model.Income) error {
 
 	return nil
 }
+
+func (i *IncomeRepository) GetTotalAmount() (int, error) {
+	var totalAmount int
+	DB := config.NewDatabase()
+	row := DB.QueryRow("SELECT SUM(amount) FROM incomes")
+
+	if err := row.Scan(&totalAmount); err != nil {
+		if err == sql.ErrNoRows {
+			return totalAmount, err
+		}
+	}
+
+	return totalAmount, nil
+}

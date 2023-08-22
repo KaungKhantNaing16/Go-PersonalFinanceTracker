@@ -28,7 +28,7 @@ func (c *CategoriesRepository) CreateCategory(category string) error {
 
 func (c *CategoriesRepository) GetCategories() ([]model.Category, error) {
 	DB := config.NewDatabase()
-	rows, err := DB.Query("SELECT * FROM categories")
+	rows, err := DB.Query("SELECT * FROM categories WHERE status = ?", 1)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,4 +49,27 @@ func (c *CategoriesRepository) GetCategories() ([]model.Category, error) {
 	}
 
 	return categories, err
+}
+
+func (c *CategoriesRepository) GetCategoryById(id int) (model.Category, error) {
+	DB := config.NewDatabase()
+	row := DB.QueryRow("SELECT * FROM categories WHERE id = ?", id)
+	var category model.Category
+	err := row.Scan(&category.ID, &category.Status, &category.Title, &category.Description, &category.CreatedAt, &category.UpdatedAt, &category.DeletedAt)
+	if err != nil {
+		return model.Category{}, err
+	}
+
+	return category, nil
+}
+
+func (c *CategoriesRepository) EditCategoryByTtl(category string) error {
+	DB := config.NewDatabase()
+	query := "UPDATE categories SET  status=? WHERE title=?"
+	_, err := DB.Exec(query, 0, category)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -49,3 +49,7 @@ func (s *IncomeService) UpdateIncome(income model.Income) error {
 
 	return s.repository.UpdateIncome(income)
 }
+
+func (s *IncomeService) GetTotalAmount() (int, error) {
+	return s.repository.GetTotalAmount()
+}

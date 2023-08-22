@@ -3,6 +3,7 @@ package expservice
 import (
 	model "Go-PersonalFinanceTracker/pkg/models"
 	exprepository "Go-PersonalFinanceTracker/pkg/repository/expenses"
+	budgetservice "Go-PersonalFinanceTracker/pkg/services/budget"
 	cateservice "Go-PersonalFinanceTracker/pkg/services/categories"
 	"errors"
 	"fmt"
@@ -16,6 +17,7 @@ var ErrExpensesNotFound = errors.New("Expense not found")
 var ErrIDIsNotValid = errors.New("Id is not valid")
 
 var categoriesService = cateservice.CategoriesService{}
+var budgetPlanService = budgetservice.BudgetService{}
 
 type ExpensesService struct {
 	expRepo exprepository.ExpensesRepository
@@ -52,17 +54,12 @@ func (e *ExpensesService) GetExpensesById(request *http.Request) (model.Expenses
 		return expense, ErrExpensesNotFound
 	}
 
-	categories, err := categoriesService.GetCategories()
+	category, err := categoriesService.GetCategoryById(expense.CateID)
 	if err != nil {
 		return expense, err
 	}
 
-	for _, category := range categories {
-		if expense.CateID == category.ID {
-			expense.CateName = category.Title
-		}
-	}
-
+	expense.CateName = category.Title
 	return expense, nil
 }
 
@@ -76,4 +73,8 @@ func (e *ExpensesService) UpdateExpenses(expense model.Expenses) error {
 	}
 	fmt.Println("Passed Services")
 	return e.expRepo.UpdateExpenses(expense)
+}
+
+func (e *ExpensesService) GetTotalAmount() (int, error) {
+	return e.expRepo.GetTotalAmount()
 }

@@ -19,3 +19,11 @@ func (c *CategoriesService) CreateCategory(category string) error {
 func (c *CategoriesService) GetCategories() ([]model.Category, error) {
 	return c.cateRepo.GetCategories()
 }
+
+func (c *CategoriesService) GetCategoryById(id int) (model.Category, error) {
+	return c.cateRepo.GetCategoryById(id)
+}
+
+func (c *CategoriesService) EditCategoryByTtl(category string) error {
+	return c.cateRepo.EditCategoryByTtl(category)
+}

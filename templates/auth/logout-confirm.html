@@ -5,14 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ . }}</title>
-    <link rel="icon" type="image/png" href="/static/img/favicon.png">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/css/lib/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="/static/css/lib/dataTables.bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="/static/css/style.css" type="text/css">
-</head>
+    {{ template "css" }}
 <body class="bg-light">
-    <div class="container auth-container mt-5 logout-sec">
+    <div class="container auth-container mt-5 logout-sec rounded">
         <div class="text-center my-3 mx-auto">
             <h5 class="title mb-5 fw-bold text-light">Are you sure want to Logout ?</h5>
             <a href="/dashboard" class="btn btn-secondary me-2">Cancel</a>

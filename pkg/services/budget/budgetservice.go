@@ -27,5 +27,14 @@ func (i *BudgetService) CreateBudgetPlan(budgetPlan models.Budget) error {
 }
 
 func (i *BudgetService) DeleteBudgetPlan(id int) error {
+	budget, err := i.budgetRepo.GetBudgetPlanById(id)
+	if err != nil {
+		return err
+	}
+
+	if err = categoriesService.EditCategoryByTtl(budget.Category); err != nil {
+		return err
+	}
+
 	return i.budgetRepo.DeleteBudgetPlan(id)
 }

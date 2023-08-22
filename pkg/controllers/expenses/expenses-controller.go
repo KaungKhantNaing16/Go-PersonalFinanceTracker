@@ -6,6 +6,7 @@ import (
 	expservice "Go-PersonalFinanceTracker/pkg/services/expenses"
 	mediaservice "Go-PersonalFinanceTracker/pkg/services/media"
 	request_validation "Go-PersonalFinanceTracker/pkg/validations"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -154,11 +155,13 @@ func SubmitExpenses(writer http.ResponseWriter, request *http.Request) {
 	validatedData := request_validation.ExpensesRequestValiation(writer, request)
 
 	if validatedData.ID != 0 {
+		fmt.Println("To update expense")
 		if err := expensesService.UpdateExpenses(validatedData); err != nil {
 			log.Fatal(err)
 		}
 		http.Redirect(writer, request, "/expenses", http.StatusFound)
 	} else {
+		fmt.Println("To create expense")
 		expensesService.CreateExpenses(validatedData)
 		http.Redirect(writer, request, "/expenses", http.StatusFound)
 	}
