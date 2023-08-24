@@ -18,8 +18,8 @@ type IncomeService struct {
 	repository inrepository.IncomeRepository
 }
 
-func (s *IncomeService) GetIncomes() []model.Income {
-	return s.repository.GetIncomes()
+func (s *IncomeService) GetIncomes(id int) []model.Income {
+	return s.repository.GetIncomes(id)
 }
 
 func (s *IncomeService) GetIncomeById(request *http.Request) (model.Income, error) {

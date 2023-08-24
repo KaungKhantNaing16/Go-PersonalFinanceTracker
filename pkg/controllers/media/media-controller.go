@@ -1,7 +1,6 @@
 package mediacontroller
 
 import (
-	model "Go-PersonalFinanceTracker/pkg/models"
 	mediaservice "Go-PersonalFinanceTracker/pkg/services/media"
 	"fmt"
 	"html/template"
@@ -32,15 +31,23 @@ func loadTemplates() {
 
 var mediaService = mediaservice.MediaService{}
 
-type MediaData struct {
-	ExpArr []model.Expenses
-	ImgArr []string
-}
-
 func GetMedia(writer http.ResponseWriter, request *http.Request) {
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	mediaDataArr, err := mediaService.GetMedia(AuthorizeID)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	folderPath := "static/img/uploads"
 	var imgArray = []string{}
-	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -55,18 +62,7 @@ func GetMedia(writer http.ResponseWriter, request *http.Request) {
 		fmt.Println(err)
 	}
 
-	expDataArr, err := mediaService.GetMedia()
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	mediaDataArr := MediaData{
-		ExpArr: expDataArr,
-		ImgArr: imgArray,
-	}
-
-	fmt.Println(mediaDataArr.ExpArr)
+	fmt.Println(mediaDataArr)
 
 	loadTemplates()
 	err = tmpl.ExecuteTemplate(writer, "index.html", mediaDataArr)

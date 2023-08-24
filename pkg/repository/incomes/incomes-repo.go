@@ -14,10 +14,9 @@ var ErrIncomeNotFound = errors.New("FromRepository - Income not found")
 type IncomeRepository struct{}
 
 // Retrieve the list of Incomes record from the database
-func (i *IncomeRepository) GetIncomes() []model.Income {
+func (i *IncomeRepository) GetIncomes(id int) []model.Income {
 	DB := config.NewDatabase()
-
-	rows, err := DB.Query("SELECT * FROM incomes")
+	rows, err := DB.Query("SELECT * FROM incomes WHERE uid = ?", id)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -2,6 +2,7 @@ package mediaRepository
 
 import (
 	"Go-PersonalFinanceTracker/config"
+	model "Go-PersonalFinanceTracker/pkg/models"
 	"errors"
 	"fmt"
 	"log"
@@ -10,14 +11,40 @@ import (
 
 type MediaRepository struct{}
 
-var ErrIDIsNotValid = errors.New("Id is not valid")
+var ErrUserIDIsNotValid = errors.New("User Id is not valid")
+var ErrExpIDIsNotValid = errors.New("Exp Id is not valid")
 
-func (m *MediaRepository) GetMediaByExpId(id int) ([]string, error) {
-	if id == 0 {
-		return nil, ErrIDIsNotValid
+func (m *MediaRepository) GetMedia(userId int) ([]model.ExpenseMediaData, error) {
+	if userId == 0 {
+		return nil, ErrUserIDIsNotValid
 	}
 	DB := config.NewDatabase()
-	rows, err := DB.Query("SELECT filename FROM slips WHERE exp_id = ?", id)
+	query := "SELECT expenses.*, slips.filename AS image_url FROM expenses JOIN slips ON expenses.id = slips.exp_id WHERE expenses.uid = ?"
+	rows, err := DB.Query(query, userId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+	var mediaDataArr []model.ExpenseMediaData
+	for rows.Next() {
+		var mediaData model.ExpenseMediaData
+		err = rows.Scan(&mediaData.ID, &mediaData.UserID, &mediaData.CateID, &mediaData.Amount, &mediaData.Title, &mediaData.Description, &mediaData.Date, &mediaData.CreateAt, &mediaData.UpdatedAt, &mediaData.ImgURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		mediaDataArr = append(mediaDataArr, mediaData)
+	}
+
+	return mediaDataArr, nil
+}
+
+func (m *MediaRepository) GetMediaByExpId(expId int) ([]string, error) {
+	if expId == 0 {
+		return nil, ErrExpIDIsNotValid
+	}
+	DB := config.NewDatabase()
+	rows, err := DB.Query("SELECT filename FROM slips WHERE exp_id = ?", expId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +66,7 @@ func (m *MediaRepository) GetMediaByExpId(id int) ([]string, error) {
 
 func (m *MediaRepository) CreateMedia(fileNameArr []string, id int) error {
 	if id == 0 {
-		return ErrIDIsNotValid
+		return ErrExpIDIsNotValid
 	}
 
 	currentDateTime := time.Now()

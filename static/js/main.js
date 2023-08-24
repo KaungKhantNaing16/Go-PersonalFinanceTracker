@@ -1,5 +1,13 @@
 $(document).ready(function () {
 	$('#example').DataTable();
+	const USERID = "UserID";
+	let cookieArr = document.cookie.split(";");
+	for (let i = 0; i < cookieArr.length; i++) {
+		let cookiePair = cookieArr[i].split("=");
+		if (USERID == cookiePair[0].trim()) {
+			$('#user_id').val(cookiePair[1])
+		}
+	}
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -86,7 +94,7 @@ function ImgUpload() {
 				break;
 			}
 		}
-		if (imgArray.length === 0 ) {
+		if (imgArray.length === 0) {
 			imgWrap.css('border', 'transparent')
 			$('.submit-btn').css('display', 'none')
 		}

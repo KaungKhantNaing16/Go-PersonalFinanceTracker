@@ -11,7 +11,9 @@
         <div class="text-center my-3 mx-auto">
             <h5 class="title mb-5 fw-bold text-light">Are you sure want to Logout ?</h5>
             <a href="/dashboard" class="btn btn-secondary me-2">Cancel</a>
-            <a href="/" class="btn btn-warning">Confirm</a>
+            <form action="/logout" method="post" class="d-inline">
+                <input type="submit" class="btn btn-warning" value="Confirm">
+            </form>
         </div>
     </div>
 </body>

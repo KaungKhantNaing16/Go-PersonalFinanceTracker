@@ -9,14 +9,18 @@ import (
 	"time"
 )
 
+var ErrInvalidUserID = errors.New("FromRepository - Invalid ID Value")
 var ErrBudgetNotFound = errors.New("FromRepository - budget not found")
 
 type BudgetRepository struct{}
 
-func (b *BudgetRepository) GetBudgetsList() []model.Budget {
-	DB := config.NewDatabase()
+func (b *BudgetRepository) GetBudgetsList(id int) ([]model.Budget, error) {
+	if id == 0 {
+		return []model.Budget{}, ErrInvalidUserID
+	}
 
-	rows, err := DB.Query("SELECT * FROM budget")
+	DB := config.NewDatabase()
+	rows, err := DB.Query("SELECT * FROM budget WHERE uid = ?", id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,11 +29,10 @@ func (b *BudgetRepository) GetBudgetsList() []model.Budget {
 	var budgetPlans []model.Budget
 	for rows.Next() {
 		var budget model.Budget
-		err = rows.Scan(&budget.ID, &budget.Title, &budget.Category, &budget.Amount, &budget.CreatedAt, &budget.UpdatedAt, &budget.DeletedAt)
+		err = rows.Scan(&budget.ID, &budget.UserID, &budget.Title, &budget.Category, &budget.Amount, &budget.CreatedAt, &budget.UpdatedAt, &budget.DeletedAt)
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		budgetPlans = append(budgetPlans, budget)
 	}
 
@@ -37,7 +40,7 @@ func (b *BudgetRepository) GetBudgetsList() []model.Budget {
 		log.Fatal(err)
 	}
 
-	return budgetPlans
+	return budgetPlans, nil
 }
 
 func (b *BudgetRepository) CreateBudgetPlan(budgetPlan model.Budget) error {
@@ -46,7 +49,7 @@ func (b *BudgetRepository) CreateBudgetPlan(budgetPlan model.Budget) error {
 	UpdatedAt := currentDateTime
 
 	DB := config.NewDatabase()
-	_, err := DB.Query("INSERT INTO budget (title, category, amount, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", budgetPlan.Title, budgetPlan.Category, budgetPlan.Amount, CreateAt, UpdatedAt)
+	_, err := DB.Query("INSERT INTO budget (uid, title, category, amount, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", budgetPlan.UserID, budgetPlan.Title, budgetPlan.Category, budgetPlan.Amount, CreateAt, UpdatedAt)
 	if err != nil {
 		return err
 	}
@@ -58,7 +61,7 @@ func (b *BudgetRepository) GetBudgetPlanById(id int) (model.Budget, error) {
 	DB := config.NewDatabase()
 	row := DB.QueryRow("SELECT * FROM budget WHERE id = ?", id)
 	var budget model.Budget
-	err := row.Scan(&budget.ID, &budget.Title, &budget.Category, &budget.Amount, &budget.CreatedAt, &budget.UpdatedAt, &budget.DeletedAt)
+	err := row.Scan(&budget.ID, &budget.UserID, &budget.Title, &budget.Category, &budget.Amount, &budget.CreatedAt, &budget.UpdatedAt, &budget.DeletedAt)
 	if err != nil {
 		return model.Budget{}, err
 	}

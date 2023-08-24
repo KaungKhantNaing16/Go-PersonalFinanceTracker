@@ -3,17 +3,13 @@ package dashboardcontroller
 import (
 	mail "Go-PersonalFinanceTracker/pkg/mails"
 	model "Go-PersonalFinanceTracker/pkg/models"
-	expservice "Go-PersonalFinanceTracker/pkg/services/expenses"
-	inservice "Go-PersonalFinanceTracker/pkg/services/incomes"
 	userservice "Go-PersonalFinanceTracker/pkg/services/users"
-	"fmt"
 	"net/http"
+	"strconv"
 	"text/template"
 )
 
 var tmpl *template.Template
-var expensesService = expservice.ExpensesService{}
-var incomeService = inservice.IncomeService{}
 var detailService = userservice.UserDetailService{}
 
 type TotalAmountData struct {
@@ -36,42 +32,47 @@ func loadTemplates() {
 }
 
 func DashboardHandler(writer http.ResponseWriter, req *http.Request) {
+	userID, _ := req.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	loadTemplates()
-	expTotal, err := expensesService.GetTotalAmount()
+	totalExp, err := detailService.GetExpAmtByUserId(AuthorizeID)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	inTotal, err := incomeService.GetTotalAmount()
+	totalIncomes, err := detailService.GetIncomesAmtByUserId(AuthorizeID)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	userDetail, err := detailService.GetUserDetailById(2)
+	userDetail, err := detailService.GetUserDetailByID(AuthorizeID)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	totalAmount := TotalAmountData{
-		Expenses: expTotal,
-		Incomes:  inTotal,
+		Expenses: totalExp,
+		Incomes:  totalIncomes,
 	}
 
 	userProfileData := ProfileData{
 		TotalAmount: totalAmount,
 		UserDetail:  userDetail,
 	}
-	fmt.Println(userProfileData)
+
 	err = tmpl.ExecuteTemplate(writer, "index.html", userProfileData)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// SendAlert(expTotal, inTotal)
 }
 
 func SendAlert(expAmt int, inAmt int) {

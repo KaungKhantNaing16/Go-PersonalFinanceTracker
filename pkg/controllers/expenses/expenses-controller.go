@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var tmpl *template.Template
@@ -42,7 +43,14 @@ func loadTemplates(fileName string) {
 }
 
 func GetExpenses(writer http.ResponseWriter, request *http.Request) {
-	expenses, err := expensesService.GetExpenses()
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	expenses, err := expensesService.GetExpenses(AuthorizeID)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -57,7 +65,14 @@ func GetExpenses(writer http.ResponseWriter, request *http.Request) {
 }
 
 func CreateExpenses(writer http.ResponseWriter, request *http.Request) {
-	categories, err := categoriesService.GetCategories()
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	categories, err := categoriesService.GetCategories(AuthorizeID)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -111,7 +126,14 @@ func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	categories, err := categoriesService.GetCategories()
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	categories, err := categoriesService.GetCategories(AuthorizeID)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

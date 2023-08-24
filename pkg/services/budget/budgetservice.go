@@ -14,8 +14,8 @@ type BudgetService struct {
 	budgetRepo budgetRepo.BudgetRepository
 }
 
-func (i *BudgetService) GetBudgetsList() []models.Budget {
-	return i.budgetRepo.GetBudgetsList()
+func (i *BudgetService) GetBudgetsList(id int) ([]models.Budget, error) {
+	return i.budgetRepo.GetBudgetsList(id)
 }
 
 func (i *BudgetService) CreateBudgetPlan(budgetPlan models.Budget) error {

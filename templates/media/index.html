@@ -45,7 +45,7 @@
                                     <div class="col-md-9">
                                         <select class="form-select" aria-label="Default select example" name="expID">
                                             <option selected>Select Expense</option>
-                                            {{ range .ExpArr }}
+                                            {{ range . }}
                                                 <option value="{{.ID}}">{{.Title}}</option>
                                             {{ end }}
                                         </select>
@@ -60,9 +60,9 @@
             </div>
             <div class="image-showcase">
                 <div class="row">
-                    {{ range .ImgArr }}
+                    {{ range . }}
                     <div class="col-md-3 img-box pb-1">
-                        <div class="img-container rounded" style="background-image: url(/static/img/uploads/{{.}});">
+                        <div class="img-container rounded" style="background-image: url(/static/img/uploads/{{.ImgURL}});">
                             &nbsp;
                         </div>
                     </div>

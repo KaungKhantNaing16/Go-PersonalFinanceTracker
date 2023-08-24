@@ -33,9 +33,15 @@ func loadTemplates(fileName string) {
 var incomeService = inservice.IncomeService{}
 
 func GetIncomes(writer http.ResponseWriter, request *http.Request) {
-	incomes := incomeService.GetIncomes()
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	incomes := incomeService.GetIncomes(AuthorizeID)
 	loadTemplates("list")
-	err := tmpl.ExecuteTemplate(writer, "list.html", incomes)
+	err = tmpl.ExecuteTemplate(writer, "list.html", incomes)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -47,6 +53,13 @@ func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 		http.Error(writer, "Invalid Request Method, method should be POST.", http.StatusMethodNotAllowed)
 		return
 	}
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	uploadFile, header, err := request.FormFile("file")
 	if err != nil {
 		http.Error(writer, "Error reading file", http.StatusInternalServerError)
@@ -59,9 +72,9 @@ func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 
 	switch filepath.Ext(header.Filename) {
 	case ".csv":
-		incomes, err = parseCSVFile(uploadFile)
+		incomes, err = parseCSVFile(uploadFile, AuthorizeID)
 	case ".xlsx":
-		incomes, err = parseXLSXFile(uploadFile)
+		incomes, err = parseXLSXFile(uploadFile, AuthorizeID)
 	default:
 		http.Error(writer, "Unsupported file formt", http.StatusBadRequest)
 		return
@@ -71,8 +84,7 @@ func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 		http.Error(writer, "Error parsing file data", http.StatusInternalServerError)
 		return
 	}
-	fmt.Print("Handle Upload File: ")
-	fmt.Println(incomes)
+
 	if err = incomeService.CreateIncomes(incomes); err != nil {
 		http.Error(writer, "Error inserting incomes to Database", http.StatusInternalServerError)
 		return
@@ -80,7 +92,7 @@ func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 	http.Redirect(writer, request, "/incomes", http.StatusFound)
 }
 
-func parseCSVFile(uploadFile io.Reader) ([]model.Income, error) {
+func parseCSVFile(uploadFile io.Reader, userId int) ([]model.Income, error) {
 	csvReader := csv.NewReader(uploadFile)
 	csvReader.Comma = ','
 
@@ -98,15 +110,14 @@ func parseCSVFile(uploadFile io.Reader) ([]model.Income, error) {
 			return nil, err
 		}
 
-		userID, _ := strconv.Atoi(record[0])
-		amount, _ := strconv.Atoi(record[1])
+		amount, _ := strconv.Atoi(record[0])
 		currentDate := time.Now()
 		income := model.Income{
-			UserID:      userID,
+			UserID:      userId,
 			Amount:      amount,
-			Title:       record[2],
-			Description: record[3],
-			FileURL:     record[4],
+			Title:       record[1],
+			Description: record[2],
+			FileURL:     record[3],
 			CreatedAt:   currentDate,
 			UpdatedAt:   currentDate,
 		}
@@ -118,7 +129,7 @@ func parseCSVFile(uploadFile io.Reader) ([]model.Income, error) {
 	return incomes, nil
 }
 
-func parseXLSXFile(uploadFile io.Reader) ([]model.Income, error) {
+func parseXLSXFile(uploadFile io.Reader, userId int) ([]model.Income, error) {
 	file, err := excelize.OpenReader(uploadFile)
 	if err != nil {
 		return nil, err
@@ -134,21 +145,19 @@ func parseXLSXFile(uploadFile io.Reader) ([]model.Income, error) {
 	rows = rows[1:]
 	fmt.Print("Parse Excel File: ")
 	for _, row := range rows {
-		userID, _ := strconv.Atoi(row[0])
-		amount, _ := strconv.Atoi(row[1])
+		amount, _ := strconv.Atoi(row[0])
 
 		income := model.Income{
-			UserID:      userID,
+			UserID:      userId,
 			Amount:      amount,
-			Title:       row[2],
-			Description: row[3],
-			FileURL:     row[4],
+			Title:       row[1],
+			Description: row[2],
+			FileURL:     row[3],
 			CreatedAt:   currentDate,
 			UpdatedAt:   currentDate,
 		}
 
 		incomes = append(incomes, income)
-		fmt.Println(incomes)
 	}
 	return incomes, nil
 }

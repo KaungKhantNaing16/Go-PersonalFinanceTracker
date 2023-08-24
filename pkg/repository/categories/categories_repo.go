@@ -3,9 +3,12 @@ package cateRepositroy
 import (
 	"Go-PersonalFinanceTracker/config"
 	model "Go-PersonalFinanceTracker/pkg/models"
+	"errors"
 	"log"
 	"time"
 )
+
+var ErrInvalidUserID = errors.New("FromRepository - Invalid ID Value")
 
 type CategoriesRepository struct{}
 
@@ -26,9 +29,14 @@ func (c *CategoriesRepository) CreateCategory(category string) error {
 	return nil
 }
 
-func (c *CategoriesRepository) GetCategories() ([]model.Category, error) {
+func (c *CategoriesRepository) GetCategories(userId int) ([]model.Category, error) {
+	if userId == 0 {
+		return []model.Category{}, ErrInvalidUserID
+	}
+
 	DB := config.NewDatabase()
-	rows, err := DB.Query("SELECT * FROM categories WHERE status = ?", 1)
+	query := "SELECT categories.* FROM categories INNER JOIN budget ON categories.title = budget.category WHERE budget.uid = ?"
+	rows, err := DB.Query(query, userId)
 	if err != nil {
 		log.Fatal(err)
 	}

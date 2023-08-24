@@ -31,10 +31,21 @@ func loadTemplates() {
 var budgetPlanService = budgetservice.BudgetService{}
 
 func GetBudgetsList(writer http.ResponseWriter, request *http.Request) {
-	budgetPlan := budgetPlanService.GetBudgetsList()
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	budgetPlan, err := budgetPlanService.GetBudgetsList(AuthorizeID)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	loadTemplates()
-	err := tmpl.ExecuteTemplate(writer, "budget.html", budgetPlan)
+	err = tmpl.ExecuteTemplate(writer, "budget.html", budgetPlan)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -52,6 +63,12 @@ func CreateBudgetPlan(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	userId, err := strconv.Atoi(request.FormValue("user_id"))
+	if err != nil {
+		http.Error(writer, "Invalid User Id value", http.StatusMethodNotAllowed)
+		return
+	}
+
 	amount, err := strconv.Atoi(request.FormValue("amount"))
 	if err != nil {
 		http.Error(writer, "Invalid Amount value", http.StatusMethodNotAllowed)
@@ -59,6 +76,7 @@ func CreateBudgetPlan(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	budgetPlan := model.Budget{
+		UserID:   userId,
 		Title:    request.FormValue("title"),
 		Category: request.FormValue("category"),
 		Amount:   amount,

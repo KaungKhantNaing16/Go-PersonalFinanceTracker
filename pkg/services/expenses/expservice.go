@@ -23,10 +23,10 @@ type ExpensesService struct {
 	expRepo exprepository.ExpensesRepository
 }
 
-func (e *ExpensesService) GetExpenses() ([]model.Expenses, error) {
+func (e *ExpensesService) GetExpenses(userId int) ([]model.Expenses, error) {
 	var Expenses []model.Expenses
-	expenses := e.expRepo.GetExpenses()
-	categories, err := categoriesService.GetCategories()
+	expenses := e.expRepo.GetExpenses(userId)
+	categories, err := categoriesService.GetCategories(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +73,4 @@ func (e *ExpensesService) UpdateExpenses(expense model.Expenses) error {
 	}
 	fmt.Println("Passed Services")
 	return e.expRepo.UpdateExpenses(expense)
-}
-
-func (e *ExpensesService) GetTotalAmount() (int, error) {
-	return e.expRepo.GetTotalAmount()
 }

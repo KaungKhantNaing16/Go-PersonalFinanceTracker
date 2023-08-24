@@ -15,10 +15,9 @@ var ErrExpensesNotFound = errors.New("FromRepository - expenses not found")
 type ExpensesRepository struct{}
 
 // Retrieve the list of Incomes record from the database
-func (i *ExpensesRepository) GetExpenses() []model.Expenses {
+func (i *ExpensesRepository) GetExpenses(userId int) []model.Expenses {
 	DB := config.NewDatabase()
-
-	rows, err := DB.Query("SELECT * FROM expenses")
+	rows, err := DB.Query("SELECT * FROM expenses WHERE uid = ?", userId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -90,20 +89,6 @@ func (e *ExpensesRepository) UpdateExpenses(expenses model.Expenses) error {
 	}
 	fmt.Println("Passed Repository")
 	return nil
-}
-
-func (e *ExpensesRepository) GetTotalAmount() (int, error) {
-	var totalAmount int
-	DB := config.NewDatabase()
-	row := DB.QueryRow("SELECT SUM(amount) FROM expenses")
-
-	if err := row.Scan(&totalAmount); err != nil {
-		if err == sql.ErrNoRows {
-			return totalAmount, err
-		}
-	}
-
-	return totalAmount, nil
 }
 
 func (e *ExpensesRepository) GetTotalAmountByCate(cateID int) (model.CateTotalAmount, error) {
