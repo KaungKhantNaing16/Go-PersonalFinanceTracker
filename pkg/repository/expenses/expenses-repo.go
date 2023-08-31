@@ -3,13 +3,13 @@ package exprepository
 import (
 	"Go-PersonalFinanceTracker/config"
 	model "Go-PersonalFinanceTracker/pkg/models"
+	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
-	"time"
 )
 
+var ErrInvalidUserID = errors.New("FromRepository - Invalid ID Value")
 var ErrExpensesNotFound = errors.New("FromRepository - expenses not found")
 
 type ExpensesRepository struct{}
@@ -19,7 +19,7 @@ func (i *ExpensesRepository) GetExpenses(userId int) []model.Expenses {
 	DB := config.NewDatabase()
 	rows, err := DB.Query("SELECT * FROM expenses WHERE uid = ?", userId)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error querying the row", err)
 	}
 	defer rows.Close()
 	var expenses []model.Expenses
@@ -27,7 +27,7 @@ func (i *ExpensesRepository) GetExpenses(userId int) []model.Expenses {
 		var exp model.Expenses
 		err := rows.Scan(&exp.ID, &exp.UserID, &exp.CateID, &exp.Amount, &exp.Title, &exp.Description, &exp.Date, &exp.CreatedAt, &exp.UpdatedAt)
 		if err != nil {
-			log.Fatal(err)
+			log.Println("Error scaning the row", err)
 		}
 
 		expenses = append(expenses, exp)
@@ -50,22 +50,30 @@ func (e *ExpensesRepository) GetExpensesById(expId int) (model.Expenses, error) 
 			return expense, ErrExpensesNotFound
 		}
 	}
-	fmt.Println(expense)
-	fmt.Println("Passed - Get by ID")
+
 	return expense, nil
 }
 
 func (e *ExpensesRepository) CreateExpenses(expenses model.Expenses) error {
-	currentDateTime := time.Now()
-	CreateAt := currentDateTime
-	UpdatedAt := currentDateTime
-
 	DB := config.NewDatabase()
-	_, err := DB.Query("INSERT INTO expenses (uid, cate_id, amount, title, description, date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", expenses.UserID, expenses.CateID, expenses.Amount, expenses.Title, expenses.Description, expenses.Date, CreateAt, UpdatedAt)
+	ctx := context.Background()
+
+	transaction, err := DB.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		log.Panicln("Error beginning the transaction", err)
 	}
 
+	insertQuery, err := transaction.PrepareContext(ctx, "INSERT INTO expenses (uid, cate_id, amount, title, description, date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+	_, err = insertQuery.Exec(expenses.UserID, expenses.CateID, expenses.Amount, expenses.Title, expenses.Description, expenses.Date, config.CreateAt, config.UpdatedAt)
+	if err != nil {
+		if err = transaction.Rollback(); err != nil {
+			log.Println("Error rolling back transaction on the insertion", err)
+		}
+	}
+
+	if err = transaction.Commit(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -82,12 +90,25 @@ func (e *ExpensesRepository) UpdateExpenses(expenses model.Expenses) error {
 	oldExp.Date = expenses.Date
 
 	DB := config.NewDatabase()
-	updateQuery := "UPDATE expenses SET  uid=?, cate_id=?, amount=?, title=?, description=?, date=? WHERE id=?"
-	_, err = DB.Exec(updateQuery, oldExp.UserID, oldExp.CateID, oldExp.Amount, oldExp.Title, oldExp.Description, oldExp.Date, oldExp.ID)
+	ctx := context.Background()
+
+	transaction, err := DB.BeginTx(ctx, nil)
 	if err != nil {
+		log.Panicln("Error beginning the transaction", err)
+	}
+
+	updateQuery, err := transaction.PrepareContext(ctx, "UPDATE expenses SET  uid=?, cate_id=?, amount=?, title=?, description=?, date=? WHERE id=?")
+	_, err = updateQuery.Exec(oldExp.UserID, oldExp.CateID, oldExp.Amount, oldExp.Title, oldExp.Description, oldExp.Date, oldExp.ID)
+	if err != nil {
+		if err = transaction.Rollback(); err != nil {
+			log.Println("Error rolling back transaction on the insertion", err)
+		}
+	}
+
+	if err = transaction.Commit(); err != nil {
 		return err
 	}
-	fmt.Println("Passed Repository")
+
 	return nil
 }
 
@@ -107,9 +128,6 @@ func (e *ExpensesRepository) GetTotalAmountByCate(cateID int) (model.CateTotalAm
 			return cateAmount, err
 		}
 	}
-
-	fmt.Print("In Repository:")
-	fmt.Println(cateAmount)
 
 	return cateAmount, nil
 }

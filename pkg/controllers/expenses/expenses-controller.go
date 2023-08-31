@@ -8,7 +8,6 @@ import (
 	request_validation "Go-PersonalFinanceTracker/pkg/validations"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -39,6 +38,7 @@ func loadTemplates(fileName string) {
 		templatePartialDir+"js.html",
 		templatePartialDir+"css.html",
 		templatesDir+fileName+".html",
+		"templates/error.html",
 	))
 }
 
@@ -52,8 +52,7 @@ func GetExpenses(writer http.ResponseWriter, request *http.Request) {
 
 	expenses, err := expensesService.GetExpenses(AuthorizeID)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	loadTemplates("list")
@@ -68,14 +67,12 @@ func CreateExpenses(writer http.ResponseWriter, request *http.Request) {
 	userID, _ := request.Cookie("UserID")
 	AuthorizeID, err := strconv.Atoi(userID.Value)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	categories, err := categoriesService.GetCategories(AuthorizeID)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	loadTemplates("create")
@@ -90,13 +87,12 @@ func GetExpenseDetail(writer http.ResponseWriter, request *http.Request) {
 	var expense model.Expenses
 	expense, err := expensesService.GetExpensesById(request)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	mediaArr, err := mediaService.GetMediaByExpId(expense.ID)
 	if err != nil {
-		log.Fatalln(err)
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	hasMedia := true
@@ -122,8 +118,7 @@ func GetExpenseDetail(writer http.ResponseWriter, request *http.Request) {
 func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 	expense, err := expensesService.GetExpensesById(request)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	userID, _ := request.Cookie("UserID")
@@ -135,8 +130,7 @@ func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 
 	categories, err := categoriesService.GetCategories(AuthorizeID)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	responseData := FormData{
@@ -154,8 +148,7 @@ func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 
 func ConfirmExpense(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		http.Error(writer, "Invalid Request Method", http.StatusMethodNotAllowed)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
 	}
 
 	validatedData := request_validation.ExpensesRequestValiation(writer, request)
@@ -170,8 +163,7 @@ func ConfirmExpense(writer http.ResponseWriter, request *http.Request) {
 
 func SubmitExpenses(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		http.Error(writer, "Invalid Request Method, method should be POST.", http.StatusMethodNotAllowed)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
 	}
 
 	validatedData := request_validation.ExpensesRequestValiation(writer, request)
@@ -179,12 +171,12 @@ func SubmitExpenses(writer http.ResponseWriter, request *http.Request) {
 	if validatedData.ID != 0 {
 		fmt.Println("To update expense")
 		if err := expensesService.UpdateExpenses(validatedData); err != nil {
-			log.Fatal(err)
+			tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 		}
-		http.Redirect(writer, request, "/expenses", http.StatusFound)
+		http.Redirect(writer, request, "/dashboard/expenses", http.StatusFound)
 	} else {
 		fmt.Println("To create expense")
 		expensesService.CreateExpenses(validatedData)
-		http.Redirect(writer, request, "/expenses", http.StatusFound)
+		http.Redirect(writer, request, "/dashboard/expenses", http.StatusFound)
 	}
 }

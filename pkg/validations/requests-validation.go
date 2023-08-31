@@ -2,7 +2,6 @@ package request_validation
 
 import (
 	model "Go-PersonalFinanceTracker/pkg/models"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -63,6 +62,5 @@ func ExpensesRequestValiation(writer http.ResponseWriter, request *http.Request)
 		Amount:      amount,
 		Date:        date,
 	}
-	fmt.Println(validatedData)
 	return validatedData
 }

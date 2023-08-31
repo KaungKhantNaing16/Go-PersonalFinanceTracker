@@ -23,12 +23,12 @@
                     </button>
                 </div> 
             </nav>
-            <form class="create-from" action="/expenses/confirm" method="post">
+            <form class="create-from" action="/dashboard/expenses/confirm" method="post">
                 <input type="hidden" id="exp_id" name="exp_id" value="{{.Expense.ID}}"/>
                 <input type="hidden" id="user_id" name="user_id" value="{{.Expense.UserID}}"/>
                 <div class="mb-3 required">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" value="{{.Expense.Title}}" />
+                    <input type="text" class="form-control" id="title" name="title" value="{{.Expense.Title}}" required/>
                 </div>
                 <div class="mb-3">
                     <label for="desc" class="form-label">Description</label>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="mb-3 required">
                     <label for="amount" class="form-label">Amount</label>
-                    <input type="number" class="form-control" id="amount" name="amount" value="{{.Expense.Amount}}" />
+                    <input type="number" class="form-control" id="amount" name="amount" value="{{.Expense.Amount}}" required/>
                 </div>
                 <div class="mb-3">
                     <label for="category" class="form-label">Category</label>

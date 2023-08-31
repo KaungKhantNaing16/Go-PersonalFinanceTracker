@@ -30,6 +30,7 @@ func loadTemplates(fileName string) {
 		templatePartialDir+"js.html",
 		templatePartialDir+"css.html",
 		templatesDir+fileName+".html",
+		"templates/error.html",
 	))
 }
 
@@ -81,7 +82,7 @@ func CheckCredentials(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	http.SetCookie(writer, &http.Cookie{Name: "UserID", Value: strconv.Itoa(userData.ID)})
-	http.Redirect(writer, request, "/dashboard", http.StatusFound)
+	http.Redirect(writer, request, "/dashboard/", http.StatusFound)
 }
 
 func Signup(writer http.ResponseWriter, request *http.Request) {
@@ -96,8 +97,7 @@ func Signup(writer http.ResponseWriter, request *http.Request) {
 
 func Registration(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		http.Error(writer, "Invalid Request Method", http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
 	}
 
 	if err := request.ParseForm(); err != nil {
@@ -126,8 +126,7 @@ func Registration(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if err := detailService.CreateUserDetails(formData); err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	loadTemplates("login")
@@ -186,6 +185,7 @@ func ConfirmLogout(writer http.ResponseWriter, request *http.Request) {
 }
 
 func Logout(writer http.ResponseWriter, request *http.Request) {
-	http.SetCookie(writer, &http.Cookie{Name: "UserID", Value: "", Expires: time.Unix(0, 0), HttpOnly: true})
-	http.Redirect(writer, request, "/", http.StatusFound)
+	expire := time.Now().Add(-7 * 24 * time.Hour)
+	http.SetCookie(writer, &http.Cookie{Name: "UserID", Value: "", Expires: expire, HttpOnly: true})
+	http.Redirect(writer, request, "/login", http.StatusFound)
 }

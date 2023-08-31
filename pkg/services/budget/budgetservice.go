@@ -19,11 +19,16 @@ func (i *BudgetService) GetBudgetsList(id int) ([]models.Budget, error) {
 }
 
 func (i *BudgetService) CreateBudgetPlan(budgetPlan models.Budget) error {
-	if err := categoriesService.CreateCategory(budgetPlan.Category); err != nil {
+	budget, err := i.budgetRepo.CreateBudgetPlan(budgetPlan)
+	if err != nil {
 		return err
 	}
 
-	return i.budgetRepo.CreateBudgetPlan(budgetPlan)
+	if err := categoriesService.CreateCategory(budget.ID, budget.Category); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (i *BudgetService) DeleteBudgetPlan(id int) error {
@@ -32,7 +37,7 @@ func (i *BudgetService) DeleteBudgetPlan(id int) error {
 		return err
 	}
 
-	if err = categoriesService.EditCategoryByTtl(budget.Category); err != nil {
+	if err = categoriesService.EditCategoryByTtl(budget.ID); err != nil {
 		return err
 	}
 

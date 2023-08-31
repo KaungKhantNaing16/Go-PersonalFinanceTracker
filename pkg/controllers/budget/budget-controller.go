@@ -25,6 +25,7 @@ func loadTemplates() {
 		templatePartialDir+"js.html",
 		templatePartialDir+"css.html",
 		templateDir+"budget.html",
+		"templates/error.html",
 	))
 }
 
@@ -40,8 +41,7 @@ func GetBudgetsList(writer http.ResponseWriter, request *http.Request) {
 
 	budgetPlan, err := budgetPlanService.GetBudgetsList(AuthorizeID)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	loadTemplates()
@@ -54,8 +54,7 @@ func GetBudgetsList(writer http.ResponseWriter, request *http.Request) {
 
 func CreateBudgetPlan(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		http.Error(writer, "Invalid Request Method", http.StatusBadRequest)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
 	}
 
 	if err := request.ParseForm(); err != nil {
@@ -83,11 +82,10 @@ func CreateBudgetPlan(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if err = budgetPlanService.CreateBudgetPlan(budgetPlan); err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
-	http.Redirect(writer, request, "/budget", http.StatusFound)
+	http.Redirect(writer, request, "/dashboard/budget", http.StatusFound)
 }
 
 func DeleteBudgetPlan(writer http.ResponseWriter, request *http.Request) {
@@ -98,9 +96,8 @@ func DeleteBudgetPlan(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if err = budgetPlanService.DeleteBudgetPlan(id); err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
-	http.Redirect(writer, request, "/budget", http.StatusFound)
+	http.Redirect(writer, request, "/dashboard/budget", http.StatusFound)
 }

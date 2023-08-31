@@ -7,47 +7,53 @@ import (
 	expcontroller "Go-PersonalFinanceTracker/pkg/controllers/expenses"
 	incontroller "Go-PersonalFinanceTracker/pkg/controllers/incomes"
 	mediacontroller "Go-PersonalFinanceTracker/pkg/controllers/media"
+	mw "Go-PersonalFinanceTracker/pkg/middleware"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-func RegisterRoutes(router *mux.Router) {
-	// RegisterDashboardRoutes
-	router.HandleFunc("/dashboard", dashboardcontroller.DashboardHandler)
-
-	// RegisterIncomeRoutes
-	router.HandleFunc("/incomes", incontroller.GetIncomes).Methods("GET")
-	router.HandleFunc("/incomes/upload", incontroller.HandleUploadFile).Methods("POST")
-	router.HandleFunc("/incomes/{id}", incontroller.GetIncomeDetail).Methods("GET")
-	router.HandleFunc("/incomes/edit/{id}", incontroller.EditIncome)
-	router.HandleFunc("/incomes/confirm", incontroller.ConfirmIncome).Methods("POST")
-	router.HandleFunc("/incomes/submit", incontroller.SubmitIncome).Methods("POST")
-
-	// RegisterExpensesRoutes
-	router.HandleFunc("/expenses", expcontroller.GetExpenses).Methods("GET")
-	router.HandleFunc("/expenses/create", expcontroller.CreateExpenses).Methods("GET")
-	router.HandleFunc("/expenses/{id}", expcontroller.GetExpenseDetail).Methods("GET")
-	router.HandleFunc("/expenses/edit/{id}", expcontroller.EditExpenses).Methods("GET")
-	router.HandleFunc("/expenses/confirm", expcontroller.ConfirmExpense).Methods("POST")
-	router.HandleFunc("/expenses/submit", expcontroller.SubmitExpenses).Methods("POST")
-
-	// RegisterBudgetRoutes
-	router.HandleFunc("/budget", budgetcontroller.GetBudgetsList).Methods("GET")
-	router.HandleFunc("/budget/create", budgetcontroller.CreateBudgetPlan).Methods("POST")
-	router.HandleFunc("/budget/delete/{id}", budgetcontroller.DeleteBudgetPlan).Methods("GET")
-
-	// RegisterMediaRoutes
-	router.HandleFunc("/media", mediacontroller.GetMedia).Methods("GET")
-	router.HandleFunc("/media/upload", mediacontroller.HandleUploadFile).Methods("POST")
+func RegisterRouters(router *mux.Router) {
+	router.Handle("/", http.RedirectHandler("/dashboard/", http.StatusSeeOther))
 
 	// RegisterAuthRoutes
-	router.HandleFunc("/", authcontroller.Login)
-	router.HandleFunc("/login", authcontroller.CheckCredentials)
+	router.HandleFunc("/login", authcontroller.Login)
+	router.HandleFunc("/check", authcontroller.CheckCredentials)
 	router.HandleFunc("/signup", authcontroller.Signup)
 	router.HandleFunc("/register", authcontroller.Registration)
-	router.HandleFunc("/confirm", authcontroller.ConfirmLogout)
 	router.HandleFunc("/logout", authcontroller.Logout)
 
-	// RegisterUserRoutes
-	// router.HandleFunc("/register", userscontroller.Registration)
+	subrouter := router.PathPrefix("/dashboard").Subrouter()
+	subrouter.Use(mw.AuthMiddleware)
+
+	// RegisterDashboardroutes
+	subrouter.HandleFunc("/", dashboardcontroller.DashboardHandler)
+
+	// RegisterIncomeroutes
+	subrouter.HandleFunc("/incomes", incontroller.GetIncomes).Methods("GET")
+	subrouter.HandleFunc("/incomes/upload", incontroller.HandleUploadFile).Methods("POST")
+	subrouter.HandleFunc("/incomes/{id}", incontroller.GetIncomeDetail).Methods("GET")
+	subrouter.HandleFunc("/incomes/edit/{id}", incontroller.EditIncome)
+	subrouter.HandleFunc("/incomes/confirm", incontroller.ConfirmIncome).Methods("POST")
+	subrouter.HandleFunc("/incomes/submit", incontroller.SubmitIncome).Methods("POST")
+
+	// RegisterExpensesroutes
+	subrouter.HandleFunc("/expenses", expcontroller.GetExpenses).Methods("GET")
+	subrouter.HandleFunc("/expenses/create", expcontroller.CreateExpenses).Methods("GET")
+	subrouter.HandleFunc("/expenses/{id}", expcontroller.GetExpenseDetail).Methods("GET")
+	subrouter.HandleFunc("/expenses/edit/{id}", expcontroller.EditExpenses).Methods("GET")
+	subrouter.HandleFunc("/expenses/confirm", expcontroller.ConfirmExpense).Methods("POST")
+	subrouter.HandleFunc("/expenses/submit", expcontroller.SubmitExpenses).Methods("POST")
+
+	// RegisterBudgetroutes
+	subrouter.HandleFunc("/budget", budgetcontroller.GetBudgetsList).Methods("GET")
+	subrouter.HandleFunc("/budget/create", budgetcontroller.CreateBudgetPlan).Methods("POST")
+	subrouter.HandleFunc("/budget/delete/{id}", budgetcontroller.DeleteBudgetPlan).Methods("GET")
+
+	// RegisterMediarroutes
+	subrouter.HandleFunc("/media", mediacontroller.GetMedia).Methods("GET")
+	subrouter.HandleFunc("/media/upload", mediacontroller.HandleUploadFile).Methods("POST")
+
+	// RegisterLogoutRoutes
+	subrouter.HandleFunc("/confirm", authcontroller.ConfirmLogout)
 }

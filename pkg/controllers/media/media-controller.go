@@ -26,6 +26,7 @@ func loadTemplates() {
 		templatePartialDir+"js.html",
 		templatePartialDir+"css.html",
 		templatesDir+"index.html",
+		"templates/error.html",
 	))
 }
 
@@ -41,28 +42,8 @@ func GetMedia(writer http.ResponseWriter, request *http.Request) {
 
 	mediaDataArr, err := mediaService.GetMedia(AuthorizeID)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
-
-	folderPath := "static/img/uploads"
-	var imgArray = []string{}
-	err = filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			fmt.Println(info.Name())
-			imgArray = append(imgArray, info.Name())
-		}
-		return nil
-	})
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(mediaDataArr)
 
 	loadTemplates()
 	err = tmpl.ExecuteTemplate(writer, "index.html", mediaDataArr)
@@ -74,8 +55,7 @@ func GetMedia(writer http.ResponseWriter, request *http.Request) {
 
 func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		http.Error(writer, "Invalid Request Method", http.StatusBadRequest)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
 	}
 
 	// Limit the file size to 10MB;
@@ -151,9 +131,8 @@ func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if err = mediaService.CreateMedia(fileNameArr, expenseId); err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
-	http.Redirect(writer, request, "/media", http.StatusFound)
+	http.Redirect(writer, request, "/dashboard/media", http.StatusFound)
 }

@@ -3,17 +3,34 @@ package mediaservice
 import (
 	model "Go-PersonalFinanceTracker/pkg/models"
 	mediarepository "Go-PersonalFinanceTracker/pkg/repository/media"
+	expservice "Go-PersonalFinanceTracker/pkg/services/expenses"
 )
+
+var expensesService = expservice.ExpensesService{}
 
 type MediaService struct {
 	mediaRepo mediarepository.MediaRepository
 }
 
-func (m *MediaService) GetMedia(userID int) ([]model.ExpenseMediaData, error) {
-	mediaDataArr, err := m.mediaRepo.GetMedia(userID)
+type MediaData struct {
+	Expenses []model.Expenses
+	Media    []model.ExpenseMediaData
+}
+
+func (m *MediaService) GetMedia(userID int) (MediaData, error) {
+	var mediaDataArr MediaData
+	expenses, err := expensesService.GetExpenses(userID)
 	if err != nil {
-		return nil, err
+		return mediaDataArr, err
 	}
+
+	mData, err := m.mediaRepo.GetMedia(userID)
+	if err != nil {
+		return mediaDataArr, err
+	}
+
+	mediaDataArr.Expenses = expenses
+	mediaDataArr.Media = mData
 
 	return mediaDataArr, nil
 }

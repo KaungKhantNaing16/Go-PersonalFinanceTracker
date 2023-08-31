@@ -74,7 +74,7 @@
                     </div>
                     <div class="col-md-5">
                         <div id="budgetform-create">
-                            <form action="/budget/create" method="post">
+                            <form action="/dashboard/budget/create" method="post">
                                 <input type="hidden" name="user_id" id="user_id" class="form-control mt-1" />
                                 <div class="mb-2">
                                     <label for="title">Title</label>
@@ -108,7 +108,7 @@
             deleteButtons.forEach(button => {
                 button.addEventListener("click", function() {
                     const expenseId = this.getAttribute("data-id");
-                    confirmDeleteButton.setAttribute("href", "/budget/delete/" + expenseId);
+                    confirmDeleteButton.setAttribute("href", "/dashboard/budget/delete/" + expenseId);
                 });
             });
         });

@@ -24,7 +24,7 @@
                 </div> 
             </nav>
             <div class="d-grid gap-2 d-md-flex justify-content mb-5">
-                <form action="/incomes/upload" method="post" enctype="multipart/form-data">
+                <form action="/dashboard/incomes/upload" method="post" enctype="multipart/form-data">
                     <div class="input-group mb-3">
                         <input type="file" class="form-control file-upload" id="inputGroupFile03" name="file" accept=".csv, .xlsx">
                         <input type="submit" class="btn btn-outline-secondary" id="inputGroupFileAddon03" value="Upload">
@@ -53,8 +53,8 @@
                         <td>{{.CreatedAt.Format "2006-01-02"}}</td>
                         <td>{{.UpdatedAt.Format "2006-01-02"}}</td>
                         <td>
-                            <a href="/incomes/{{.ID}}" class="btn btn-success btn-sm action-btn">Detail</a>
-                            <a href="/incomes/edit/{{.ID}}" class="btn btn-warning btn-sm action-btn">Edit</a>
+                            <a href="/dashboard/incomes/{{.ID}}" class="btn btn-success btn-sm action-btn">Detail</a>
+                            <a href="/dashboard/incomes/edit/{{.ID}}" class="btn btn-warning btn-sm action-btn">Edit</a>
                         </td>
                     </tr>
                     {{ end }}

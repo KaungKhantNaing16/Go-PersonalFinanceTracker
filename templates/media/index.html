@@ -28,10 +28,10 @@
                 </div>
             </nav>
             <div class="container img-upload">
-                <form action="/media/upload" method="post" enctype="multipart/form-data">
+                <form action="/dashboard/media/upload" method="post" enctype="multipart/form-data">
                     <div class="upload__box">
-                        <div class="row align-items-center mb-2 ">
-                            <div class="col-md-2">
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3 select-img">
                                 <div class="upload__btn-box">
                                     <label class="upload__btn">
                                         <p>Upload images</p>
@@ -40,17 +40,15 @@
                                 </div>
                             </div>
                             <div class="col-md-6 select-expense">
-                                <div class="row align-items-start">
-                                    <div class="col-md-3 py-2 required"><label for="category" class="form-label text-light ps-2">Expense Title</label></div>
-                                    <div class="col-md-9">
-                                        <select class="form-select" aria-label="Default select example" name="expID">
-                                            <option selected>Select Expense</option>
-                                            {{ range . }}
-                                                <option value="{{.ID}}">{{.Title}}</option>
-                                            {{ end }}
-                                        </select>
-                                    </div>  
-                                </div>
+                                <div class="py-2 required"><label for="category" class="form-label text-light ps-2">Expense Title</label></div>
+                                <div class="select-box">
+                                    <select class="form-select" aria-label="Default select example" name="expID">
+                                        <option selected>Select Expense</option>
+                                        {{ range .Expenses }}
+                                            <option value="{{.ID}}">{{.Title}}</option>
+                                        {{ end }}
+                                    </select>
+                                </div> 
                             </div>
                         </div>
                         <div class="upload__img-wrap"></div>
@@ -60,7 +58,7 @@
             </div>
             <div class="image-showcase">
                 <div class="row">
-                    {{ range . }}
+                    {{ range .Media }}
                     <div class="col-md-3 img-box pb-1">
                         <div class="img-container rounded" style="background-image: url(/static/img/uploads/{{.ImgURL}});">
                             &nbsp;

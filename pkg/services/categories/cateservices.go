@@ -12,8 +12,8 @@ type CategoriesService struct {
 	cateRepo cateRepositroy.CategoriesRepository
 }
 
-func (c *CategoriesService) CreateCategory(category string) error {
-	return c.cateRepo.CreateCategory(category)
+func (c *CategoriesService) CreateCategory(bid int, category string) error {
+	return c.cateRepo.CreateCategory(bid, category)
 }
 
 func (c *CategoriesService) GetCategories(userId int) ([]model.Category, error) {
@@ -24,6 +24,6 @@ func (c *CategoriesService) GetCategoryById(id int) (model.Category, error) {
 	return c.cateRepo.GetCategoryById(id)
 }
 
-func (c *CategoriesService) EditCategoryByTtl(category string) error {
-	return c.cateRepo.EditCategoryByTtl(category)
+func (c *CategoriesService) EditCategoryByTtl(bid int) error {
+	return c.cateRepo.EditCategoryByTtl(bid)
 }

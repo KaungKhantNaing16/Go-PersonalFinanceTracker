@@ -36,7 +36,7 @@ type Expenses struct {
 // Category struct
 type Category struct {
 	ID          int
-	Status      bool
+	BID         int
 	Title       string
 	Description string
 	CreatedAt   time.Time

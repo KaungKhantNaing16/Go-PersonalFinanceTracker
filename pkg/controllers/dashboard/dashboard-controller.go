@@ -42,20 +42,17 @@ func DashboardHandler(writer http.ResponseWriter, req *http.Request) {
 	loadTemplates()
 	totalExp, err := detailService.GetExpAmtByUserId(AuthorizeID)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	totalIncomes, err := detailService.GetIncomesAmtByUserId(AuthorizeID)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	userDetail, err := detailService.GetUserDetailByID(AuthorizeID)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	totalAmount := TotalAmountData{

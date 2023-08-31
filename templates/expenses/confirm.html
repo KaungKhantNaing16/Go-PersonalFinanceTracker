@@ -23,7 +23,7 @@
                     </button>
                 </div> 
             </nav>
-            <form class="create-from" action="/expenses/submit" method="post">
+            <form class="create-from" action="/dashboard/expenses/submit" method="post">
                 {{ if .ID }}
                 <input type="hidden" id="exp_id" name="exp_id" value="{{.ID}}" />
                 {{ end }}

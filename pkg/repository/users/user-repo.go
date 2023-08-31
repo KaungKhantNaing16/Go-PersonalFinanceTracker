@@ -3,9 +3,10 @@ package userrepository
 import (
 	"Go-PersonalFinanceTracker/config"
 	model "Go-PersonalFinanceTracker/pkg/models"
+	"context"
 	"database/sql"
 	"errors"
-	"time"
+	"log"
 )
 
 var ErrInvalidUserID = errors.New("FromRepository - Invalid ID Value")
@@ -15,18 +16,27 @@ var ErrUserNotFound = errors.New("FromRepository - User Detail Not Found")
 type UserRepository struct{}
 
 func (u *UserRepository) CreateUserDetails(formData model.UserDetail) error {
-	currentDateTime := time.Now()
-	CreateAt := currentDateTime
-	UpdatedAt := currentDateTime
-
 	DB := config.NewDatabase()
-	InsertQuery := "INSERT INTO user_details(status, name, email, job, password, profile_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+	ctx := context.Background()
 
-	_, err := DB.Exec(InsertQuery, formData.Status, formData.Name, formData.Email, formData.Job, formData.Password, formData.Profile, CreateAt, UpdatedAt)
+	transaction, err := DB.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		log.Panicln("Error beginning the transaction", err)
 	}
 
+	insertQuery, err := transaction.PrepareContext(ctx, "INSERT INTO user_details(status, name, email, job, password, profile_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+	if err == nil {
+		_, err := insertQuery.Exec(formData.Status, formData.Name, formData.Email, formData.Job, formData.Password, formData.Profile, config.CreateAt, config.UpdatedAt)
+		if err != nil {
+			if err = transaction.Rollback(); err != nil {
+				log.Println("Error rolling back transaction on the insertion", err)
+			}
+		}
+	}
+
+	if err = transaction.Commit(); err != nil {
+		return err
+	}
 	return nil
 }
 

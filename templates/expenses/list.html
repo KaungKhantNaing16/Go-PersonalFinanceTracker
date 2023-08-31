@@ -24,7 +24,7 @@
                 </div> 
             </nav>
             <div class="mb-5">
-                <a href="/expenses/create" class="btn btn-primary me-md-2">Create</a>
+                <a href="/dashboard/expenses/create" class="btn btn-primary me-md-2">Create</a>
             </div>
             <table id="example" class="table table-striped .table-responsive" style="width:100%">
                 <thead>
@@ -50,8 +50,8 @@
                         <td>{{.CreatedAt.Format "2006-01-02"}}</td>
                         <td>{{.UpdatedAt.Format "2006-01-02"}}</td>
                         <td>
-                            <a href="/expenses/{{.ID}}" class="btn btn-success btn-sm action-btn">Detail</a>
-                            <a href="/expenses/edit/{{.ID}}" class="btn btn-warning btn-sm action-btn">Edit</a>
+                            <a href="/dashboard/expenses/{{.ID}}" class="btn btn-success btn-sm action-btn">Detail</a>
+                            <a href="/dashboard/expenses/edit/{{.ID}}" class="btn btn-warning btn-sm action-btn">Edit</a>
                         </td>
                     </tr>
                     {{ end }}
