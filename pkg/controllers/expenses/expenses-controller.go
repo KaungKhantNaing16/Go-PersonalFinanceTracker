@@ -4,22 +4,29 @@ import (
 	model "Go-PersonalFinanceTracker/pkg/models"
 	cateservice "Go-PersonalFinanceTracker/pkg/services/categories"
 	expservice "Go-PersonalFinanceTracker/pkg/services/expenses"
+	mediaservice "Go-PersonalFinanceTracker/pkg/services/media"
+	request_validation "Go-PersonalFinanceTracker/pkg/validations"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
-	"reflect"
 	"strconv"
-	"time"
 )
 
 var tmpl *template.Template
-var errors = []string{}
-var layout = "2006-01-02"
+
+var expensesService = expservice.ExpensesService{}
+var mediaService = mediaservice.MediaService{}
+var categoriesService = cateservice.CategoriesService{}
 
 type FormData struct {
 	Expense    *model.Expenses
 	Categories *[]model.Category
+}
+
+type DetailData struct {
+	Expense    model.Expenses
+	Media      []string
+	IsHasMedia bool
 }
 
 func loadTemplates(fileName string) {
@@ -31,17 +38,25 @@ func loadTemplates(fileName string) {
 		templatePartialDir+"js.html",
 		templatePartialDir+"css.html",
 		templatesDir+fileName+".html",
+		"templates/error.html",
 	))
 }
 
-var expensesService = expservice.ExpensesService{}
-var categoriesService = cateservice.CategoriesService{}
-
 func GetExpenses(writer http.ResponseWriter, request *http.Request) {
-	expenses := expensesService.GetExpenses()
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	expenses, err := expensesService.GetExpenses(AuthorizeID)
+	if err != nil {
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+	}
 
 	loadTemplates("list")
-	err := tmpl.ExecuteTemplate(writer, "list.html", expenses)
+	err = tmpl.ExecuteTemplate(writer, "list.html", expenses)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -49,10 +64,15 @@ func GetExpenses(writer http.ResponseWriter, request *http.Request) {
 }
 
 func CreateExpenses(writer http.ResponseWriter, request *http.Request) {
-	categories, err := categoriesService.GetCategories()
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+	}
+
+	categories, err := categoriesService.GetCategories(AuthorizeID)
+	if err != nil {
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	loadTemplates("create")
@@ -67,12 +87,28 @@ func GetExpenseDetail(writer http.ResponseWriter, request *http.Request) {
 	var expense model.Expenses
 	expense, err := expensesService.GetExpensesById(request)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+	}
+
+	mediaArr, err := mediaService.GetMediaByExpId(expense.ID)
+	if err != nil {
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+	}
+
+	hasMedia := true
+
+	if mediaArr == nil {
+		hasMedia = false
+	}
+
+	detailData := DetailData{
+		Expense:    expense,
+		Media:      mediaArr,
+		IsHasMedia: hasMedia,
 	}
 
 	loadTemplates("detail")
-	err = tmpl.ExecuteTemplate(writer, "detail.html", expense)
+	err = tmpl.ExecuteTemplate(writer, "detail.html", detailData)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -82,14 +118,19 @@ func GetExpenseDetail(writer http.ResponseWriter, request *http.Request) {
 func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 	expense, err := expensesService.GetExpensesById(request)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
-	categories, err := categoriesService.GetCategories()
+	userID, _ := request.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	categories, err := categoriesService.GetCategories(AuthorizeID)
+	if err != nil {
+		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
 	responseData := FormData{
@@ -107,159 +148,35 @@ func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 
 func ConfirmExpense(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		http.Error(writer, "Invalid Request Method", http.StatusMethodNotAllowed)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
 	}
 
-	err := request.ParseForm()
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	validatedData := request_validation.ExpensesRequestValiation(writer, request)
 
-	expIdStr := request.FormValue("exp_id")
-	var expId int
-	if expIdStr != "" {
-		if expId, err = strconv.Atoi(expIdStr); err != nil {
-			http.Error(writer, "Invalid Expense Id value", http.StatusMethodNotAllowed)
-			return
-		}
-	}
-
-	userIdStr := request.FormValue("user_id")
-	userId, err := strconv.Atoi(userIdStr)
-	if err != nil {
-		http.Error(writer, "Invalid User Id value", http.StatusMethodNotAllowed)
-		return
-	}
-
-	title := request.Form["title"][0]
-	if title == "" {
-		http.Error(writer, "Invalid Title value", http.StatusMethodNotAllowed)
-		return
-	}
-
-	description := request.Form["desc"][0]
-	if description == "" {
-		http.Error(writer, "Invalid Description value", http.StatusMethodNotAllowed)
-		return
-	}
-
-	cateStr := request.FormValue("category")
-	category, err := strconv.Atoi(cateStr)
-	if err != nil {
-		http.Error(writer, "Invalid Category value", http.StatusMethodNotAllowed)
-		return
-	}
-
-	amoutStr := request.FormValue("amount")
-	amount, err := strconv.Atoi(amoutStr)
-	if err != nil {
-		http.Error(writer, "Invalid Amount value", http.StatusMethodNotAllowed)
-		return
-	}
-
-	dateStr := request.FormValue("date")
-	date, err := time.Parse(layout, dateStr)
-	if err != nil {
-		// errors = append(errors, "Invalid date value")
-		http.Error(writer, "Invalid Date value", http.StatusMethodNotAllowed)
-		return
-	}
-
-	Expenses := model.Expenses{
-		UserID:      userId,
-		Title:       title,
-		Description: description,
-		CateID:      category,
-		Amount:      amount,
-		Date:        date,
-	}
-
-	if expId != 0 {
-		Expenses.ID = expId
-	}
-	fmt.Print("Confirm page:")
-	fmt.Println(Expenses)
 	loadTemplates("confirm")
-	err = tmpl.ExecuteTemplate(writer, "confirm.html", Expenses)
+	err := tmpl.ExecuteTemplate(writer, "confirm.html", validatedData)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func SubmitExpenses(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		http.Error(writer, "Invalid Request Method, method should be POST.", http.StatusMethodNotAllowed)
-		return
+		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
 	}
 
-	err := request.ParseForm()
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	validatedData := request_validation.ExpensesRequestValiation(writer, request)
 
-	userIdStr := request.FormValue("user_id")
-	userId, _ := strconv.Atoi(userIdStr)
-
-	title := request.FormValue("title")
-
-	description := request.FormValue("desc")
-
-	cateStr := request.FormValue("category")
-	category, _ := strconv.Atoi(cateStr)
-
-	amoutStr := request.FormValue("amount")
-	amount, _ := strconv.Atoi(amoutStr)
-
-	dateStr := request.FormValue("date")
-	date, _ := time.Parse(layout, dateStr)
-
-	responseData := model.Expenses{
-		UserID:      userId,
-		Title:       title,
-		Description: description,
-		CateID:      category,
-		Amount:      amount,
-		Date:        date,
-	}
-
-	expIdStr := request.FormValue("exp_id")
-	fmt.Println(expIdStr)
-	fmt.Println(reflect.TypeOf(expIdStr))
-	if expIdStr != "0" {
-		expId, err := strconv.Atoi(expIdStr)
-		if err != nil {
-			// http.Error(writer, "Invalid Expense Id value", http.StatusMethodNotAllowed)
-			// return
-			log.Fatal(err)
+	if validatedData.ID != 0 {
+		fmt.Println("To update expense")
+		if err := expensesService.UpdateExpenses(validatedData); err != nil {
+			tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 		}
-		responseData.ID = expId
-		fmt.Print("To edit:")
-		fmt.Println(responseData)
-		if err = expensesService.UpdateExpenses(expId, responseData); err != nil {
-			// http.Error(writer, err.Error(), http.StatusInternalServerError)
-			// return
-			log.Fatal(err)
-		}
-		http.Redirect(writer, request, "/expenses", http.StatusFound)
+		http.Redirect(writer, request, "/dashboard/expenses", http.StatusFound)
 	} else {
-		fmt.Print("To create:")
-		fmt.Println(responseData)
-		expensesService.CreateExpenses(responseData)
-		http.Redirect(writer, request, "/expenses", http.StatusFound)
+		fmt.Println("To create expense")
+		expensesService.CreateExpenses(validatedData)
+		http.Redirect(writer, request, "/dashboard/expenses", http.StatusFound)
 	}
-
 }
-
-// func DeleteExpenses(writer http.ResponseWriter, request *http.Request) {
-// 	loadTemplates("list")
-// 	err := tmpl.ExecuteTemplate(writer, "list.html", expenses)
-// 	if err != nil {
-// 		http.Error(writer, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }

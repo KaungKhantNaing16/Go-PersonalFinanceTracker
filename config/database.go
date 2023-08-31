@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/bcrypt"
@@ -14,6 +15,13 @@ const (
 	password = "root"
 	hostname = "127.0.0.1:3306"
 	dbname   = "finance_tracker"
+)
+
+var (
+	currentDateTime = time.Now()
+	CreateAt        = currentDateTime
+	UpdatedAt       = currentDateTime
+	Deletedat       = currentDateTime
 )
 
 func hashAndSalt(pwd []byte) string {

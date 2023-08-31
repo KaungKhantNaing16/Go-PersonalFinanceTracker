@@ -23,8 +23,8 @@
                     </button>
                 </div> 
             </nav>
-            <form class="create-from" action="/expenses/confirm" method="post">
-                <input type="hidden" id="user_id" name="user_id" value="1" />
+            <form class="create-from" action="/dashboard/expenses/confirm" method="post">
+                <input type="hidden" id="user_id" name="user_id"/>
                 <div class="mb-3 required">
                     <label for="title" class="form-label">Title</label>
                     <input type="text" class="form-control" id="title" name="title" required>
@@ -52,7 +52,7 @@
                 </div>
                 
                 <div class="btn-group mt-5">
-                    <button type="button" class="btn btn-danger me-2">Clear</button>
+                    <input type="reset" class="btn btn-dark me-2" value="Clear">
                     <input type="submit" class="btn btn-primary" value="Confirm">
                 </div>
             </form>

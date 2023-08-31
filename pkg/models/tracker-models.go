@@ -10,14 +10,11 @@ type User struct {
 
 // UserDetail struct
 type UserDetail struct {
-	ID        int
-	UserID    int
-	Name      string
-	Email     string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	ID, Status                int
+	Name, Email, Job, Profile string
+	Password                  []byte
+	CreatedAt, UpdatedAt      time.Time
+	DeletedAt                 any
 }
 
 // Income struct
@@ -31,15 +28,15 @@ type Income struct {
 
 // Expenses struct
 type Expenses struct {
-	ID, UserID, CateID, Amount int
-	Title, Description         string
-	Date, CreatedAt, UpdatedAt time.Time
+	ID, UserID, CateID, Amount   int
+	Title, Description, CateName string
+	Date, CreatedAt, UpdatedAt   time.Time
 }
 
 // Category struct
 type Category struct {
 	ID          int
-	Status      bool
+	BID         int
 	Title       string
 	Description string
 	CreatedAt   time.Time
@@ -47,22 +44,25 @@ type Category struct {
 	DeletedAt   any
 }
 
-// Loan struct
-type Loan struct {
-	ID          int
-	Title       int
-	Description string
-	Amount      int
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+// CateTotalAmount struct
+type CateTotalAmount struct {
+	Category                  string
+	TotalAmount, BudgetAmount int
 }
 
 // Budget struct
 type Budget struct {
-	ID          int
-	Title       int
-	Description string
-	Amount      int
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID, UserID int
+	Title      string
+	Category   string
+	Amount     int
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  any
+}
+
+type ExpenseMediaData struct {
+	ID, UserID, CateID, Amount int
+	Title, Description, ImgURL string
+	Date, CreateAt, UpdatedAt  time.Time
 }

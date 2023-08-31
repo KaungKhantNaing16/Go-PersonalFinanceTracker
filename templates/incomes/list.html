@@ -17,15 +17,19 @@
                         <i class="fa fa-bars"></i>
                         <span class="sr-only">Toggle Menu</span>
                     </button>
-                    <h2 class="mx-2">Icomes</h2>
+                    <h2 class="mx-2">Incomes</h2>
                     <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa fa-bars"></i>
                     </button>
                 </div> 
             </nav>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-                <a href="/income/create" class="btn btn-primary me-md-2">Create</a>
-                <a href="#" class="btn btn-primary">Upload</a>
+            <div class="d-grid gap-2 d-md-flex justify-content mb-5">
+                <form action="/dashboard/incomes/upload" method="post" enctype="multipart/form-data">
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control file-upload" id="inputGroupFile03" name="file" accept=".csv, .xlsx">
+                        <input type="submit" class="btn btn-outline-secondary" id="inputGroupFileAddon03" value="Upload">
+                      </div>
+                </form>
             </div>
             <table id="example" class="table table-striped .table-responsive" style="width:100%">
                 <thead>
@@ -46,11 +50,11 @@
                         <td>{{.Description}}</td>
                         <td>{{.Amount}}</td>
                         <td>{{.FileURL}}</td>
-                        <td>{{.CreatedAt}}</td>
-                        <td>{{.UpdatedAt}}</td>
+                        <td>{{.CreatedAt.Format "2006-01-02"}}</td>
+                        <td>{{.UpdatedAt.Format "2006-01-02"}}</td>
                         <td>
-                            <a href="/expenses/detail" class="btn btn-success btn-sm action-btn">Detail</a>
-                            <a href="/expenses/update" class="btn btn-warning btn-sm action-btn">Edit</a>
+                            <a href="/dashboard/incomes/{{.ID}}" class="btn btn-success btn-sm action-btn">Detail</a>
+                            <a href="/dashboard/incomes/edit/{{.ID}}" class="btn btn-warning btn-sm action-btn">Edit</a>
                         </td>
                     </tr>
                     {{ end }}

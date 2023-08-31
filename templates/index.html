@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="icon" type="image/png" href="/static/img/favicon.png">
     {{ template "css" }}
 </head>
+
 <body>
     <div class="wrapper d-flex align-items-stretch">
         {{ template "sidebar" }}
@@ -18,29 +19,58 @@
                         <i class="fa fa-bars"></i>
                         <span class="sr-only">Toggle Menu</span>
                     </button>
-                    <h2 class="mx-2">{{ . }}</h2>
-                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <h2 class="mx-2">Dashboard</h2>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa fa-bars"></i>
                     </button>
-                </div> 
+                </div>
             </nav>
-            <div class="container d-flex flex-wrap align-items-center mb-5 dashboard-cards">
-                <div class="m-2 card">Available</div>
-                <a href="/incomes">
-                    <div class="m-2 card">Income</div>
-                </a>
-                <a href="/expenses">
-                    <div class="m-2 card">Expenses</div>
-                </a>
-                <a href="/loan/give">
-                    <div class="m-2 card">Giving Loan</div>
-                </a>
-                <a href="/loan/recieve">
-                    <div class="m-2 card">Receiving Loan</div>
-                </a>
+            <div class="dashboard-sec">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="user-profile">
+                            <div class="img-area">
+                                <div class="inner-area">
+                                    <img src="/static/img/profile/{{.UserDetail.Profile}}" alt="profile image">
+                                </div>
+                            </div>
+                            <div class="icon dots"><i class="fa fa-ellipsis-v"></i></div>
+                            <div class="name">{{.UserDetail.Name}}</div>
+                            <div class="about">{{.UserDetail.Job}} - <small>{{.UserDetail.Email}}</small></div>
+                            <div class="social-icons">
+                                <a href="#" class="fb"><i class="fa fa-facebook-f"></i></a>
+                                <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
+                                <a href="#" class="insta"><i class="fa fa-instagram"></i></a>
+                                <a href="#" class="yt"><i class="fa fa-youtube"></i></a>
+                            </div>
+                            <div class="buttons">
+                                <a class="profile-btn text-center" href="/dashboard/incomes">{{.TotalAmount.Incomes}}</a>
+                                <a class="profile-btn text-center" href="/dashboard/expenses">{{.TotalAmount.Expenses}}</a>
+                            </div>
+                            <div class="social-share">
+                                <div class="engage-row">
+                                    <i class="fa fa-heart"></i>
+                                    <span>20.4k</span>
+                                </div>
+                                <div class="engage-row">
+                                    <i class="fa fa-comment"></i>
+                                    <span>14.3k</span>
+                                </div>
+                                <div class="engage-row">
+                                    <i class="fa fa-share"></i>
+                                    <span>12.8k</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    {{ template "js" }}
+        {{ template "js" }}
 </body>
 </html>
