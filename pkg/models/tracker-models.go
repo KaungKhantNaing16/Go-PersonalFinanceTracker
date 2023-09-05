@@ -66,3 +66,19 @@ type ExpenseMediaData struct {
 	Title, Description, ImgURL string
 	Date, CreateAt, UpdatedAt  time.Time
 }
+
+type IEBData struct {
+	Incomes  *[]Income
+	Expenses *[]Expenses
+	Budget   *[]Budget
+}
+
+type TotalAmountData struct {
+	Expenses, Incomes int
+}
+
+type OAData struct {
+	TotalAmount TotalAmountData
+	UserDetail  UserDetail
+	IEB         IEBData
+}

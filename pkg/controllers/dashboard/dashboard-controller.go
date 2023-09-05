@@ -2,24 +2,13 @@ package dashboardcontroller
 
 import (
 	mail "Go-PersonalFinanceTracker/pkg/mails"
-	model "Go-PersonalFinanceTracker/pkg/models"
-	userservice "Go-PersonalFinanceTracker/pkg/services/users"
+	dashboardservice "Go-PersonalFinanceTracker/pkg/services/dashboard"
 	"net/http"
 	"strconv"
 	"text/template"
 )
 
 var tmpl *template.Template
-var detailService = userservice.UserDetailService{}
-
-type TotalAmountData struct {
-	Expenses, Incomes int
-}
-
-type ProfileData struct {
-	TotalAmount TotalAmountData
-	UserDetail  model.UserDetail
-}
 
 func loadTemplates() {
 	templatePartialDir := "templates/partials/"
@@ -40,32 +29,12 @@ func DashboardHandler(writer http.ResponseWriter, req *http.Request) {
 	}
 
 	loadTemplates()
-	totalExp, err := detailService.GetExpAmtByUserId(AuthorizeID)
+	oaDataArr, err := dashboardservice.DashboardService(AuthorizeID)
 	if err != nil {
 		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
 	}
 
-	totalIncomes, err := detailService.GetIncomesAmtByUserId(AuthorizeID)
-	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
-	}
-
-	userDetail, err := detailService.GetUserDetailByID(AuthorizeID)
-	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
-	}
-
-	totalAmount := TotalAmountData{
-		Expenses: totalExp,
-		Incomes:  totalIncomes,
-	}
-
-	userProfileData := ProfileData{
-		TotalAmount: totalAmount,
-		UserDetail:  userDetail,
-	}
-
-	err = tmpl.ExecuteTemplate(writer, "index.html", userProfileData)
+	err = tmpl.ExecuteTemplate(writer, "index.html", oaDataArr)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

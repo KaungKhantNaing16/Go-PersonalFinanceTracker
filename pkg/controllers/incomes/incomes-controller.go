@@ -3,6 +3,7 @@ package incontroller
 import (
 	model "Go-PersonalFinanceTracker/pkg/models"
 	inservice "Go-PersonalFinanceTracker/pkg/services/incomes"
+	userservice "Go-PersonalFinanceTracker/pkg/services/users"
 	"encoding/csv"
 	"fmt"
 	"html/template"
@@ -17,6 +18,13 @@ import (
 )
 
 var tmpl *template.Template
+var incomeService = inservice.IncomeService{}
+var detailService = userservice.UserDetailService{}
+
+type IUData struct {
+	Incomes  []model.Income
+	UserData model.UserDetail
+}
 
 func loadTemplates(fileName string) {
 	templatePartialDir := "templates/partials/"
@@ -31,8 +39,6 @@ func loadTemplates(fileName string) {
 	))
 }
 
-var incomeService = inservice.IncomeService{}
-
 func GetIncomes(writer http.ResponseWriter, request *http.Request) {
 	userID, _ := request.Cookie("UserID")
 	AuthorizeID, err := strconv.Atoi(userID.Value)
@@ -40,9 +46,21 @@ func GetIncomes(writer http.ResponseWriter, request *http.Request) {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	incomes := incomeService.GetIncomes(AuthorizeID)
+	userDetail, err := detailService.GetUserDetailByID(AuthorizeID)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	iuData := IUData{
+		Incomes:  incomes,
+		UserData: userDetail,
+	}
+
 	loadTemplates("list")
-	err = tmpl.ExecuteTemplate(writer, "list.html", incomes)
+	err = tmpl.ExecuteTemplate(writer, "list.html", iuData)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

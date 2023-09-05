@@ -101,3 +101,7 @@ function ImgUpload() {
 		$(this).parent().parent().remove();
 	});
 }
+
+function ieDataHandler(iebData) {
+	console.log(iebData)
+}
