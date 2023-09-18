@@ -5,7 +5,6 @@ import (
 	inservice "Go-PersonalFinanceTracker/pkg/services/incomes"
 	userservice "Go-PersonalFinanceTracker/pkg/services/users"
 	"encoding/csv"
-	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -69,7 +68,8 @@ func GetIncomes(writer http.ResponseWriter, request *http.Request) {
 
 func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		tmpl.ExecuteTemplate(writer, "error.html", "Invalide Request Method")
+		http.Error(writer, "Invalide Request Method", http.StatusBadRequest)
+		return
 	}
 	userID, _ := request.Cookie("UserID")
 	AuthorizeID, err := strconv.Atoi(userID.Value)
@@ -81,7 +81,6 @@ func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 	uploadFile, header, err := request.FormFile("file")
 	if err != nil {
 		http.Error(writer, "Error reading file", http.StatusInternalServerError)
-		log.Fatalln(err)
 		return
 	}
 
@@ -94,15 +93,18 @@ func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 	case ".xlsx":
 		incomes, err = parseXLSXFile(uploadFile, AuthorizeID)
 	default:
-		tmpl.ExecuteTemplate(writer, "error.html", "Unsupported file formt")
+		http.Error(writer, "Unsupported file formt", http.StatusInternalServerError)
+		return
 	}
 
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", "Error parsing file data")
+		http.Error(writer, "Error parsing file data", http.StatusInternalServerError)
+		return
 	}
 
 	if err = incomeService.CreateIncomes(incomes); err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	http.Redirect(writer, request, "/dashboard/incomes", http.StatusFound)
 }
@@ -138,8 +140,6 @@ func parseCSVFile(uploadFile io.Reader, userId int) ([]model.Income, error) {
 		}
 
 		incomes = append(incomes, income)
-		fmt.Print("Parse CSV File:")
-		fmt.Println(incomes)
 	}
 	return incomes, nil
 }
@@ -183,7 +183,8 @@ func GetIncomeDetail(writer http.ResponseWriter, request *http.Request) {
 	var income model.Income
 	income, err := incomeService.GetIncomeById(request)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	loadTemplates("detail")
@@ -198,7 +199,8 @@ func EditIncome(writer http.ResponseWriter, request *http.Request) {
 	var income model.Income
 	income, err := incomeService.GetIncomeById(request)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	loadTemplates("edit")
@@ -211,7 +213,8 @@ func EditIncome(writer http.ResponseWriter, request *http.Request) {
 
 func ConfirmIncome(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		tmpl.ExecuteTemplate(writer, "error.html", "Invalide Request Method")
+		http.Error(writer, "Invalid Request Method", http.StatusInternalServerError)
+		return
 	}
 
 	err := request.ParseForm()
@@ -248,7 +251,8 @@ func ConfirmIncome(writer http.ResponseWriter, request *http.Request) {
 
 func SubmitIncome(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		tmpl.ExecuteTemplate(writer, "error.html", "Invalide Request Method")
+		http.Error(writer, "Invalid Request Method", http.StatusInternalServerError)
+		return
 	}
 
 	err := request.ParseForm()
@@ -280,7 +284,8 @@ func SubmitIncome(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if err := incomeService.UpdateIncome(income); err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	http.Redirect(writer, request, "/dashboard/incomes", http.StatusFound)
 }

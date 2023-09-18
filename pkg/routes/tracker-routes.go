@@ -28,7 +28,7 @@ func RegisterRouters(router *mux.Router) {
 
 	// RegisterDashboardroutes
 	subrouter.HandleFunc("/", dashboardcontroller.DashboardHandler)
-
+	subrouter.HandleFunc("/api", dashboardcontroller.ChartHandler)
 	// RegisterIncomeroutes
 	subrouter.HandleFunc("/incomes", incontroller.GetIncomes).Methods("GET")
 	subrouter.HandleFunc("/incomes/upload", incontroller.HandleUploadFile).Methods("POST")

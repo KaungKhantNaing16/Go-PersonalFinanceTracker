@@ -5,6 +5,7 @@ import (
 	budgetservice "Go-PersonalFinanceTracker/pkg/services/budget"
 	expservice "Go-PersonalFinanceTracker/pkg/services/expenses"
 	inservice "Go-PersonalFinanceTracker/pkg/services/incomes"
+	mediaservice "Go-PersonalFinanceTracker/pkg/services/media"
 	userservice "Go-PersonalFinanceTracker/pkg/services/users"
 )
 
@@ -12,9 +13,17 @@ var detailService = userservice.UserDetailService{}
 var incomeService = inservice.IncomeService{}
 var expensesService = expservice.ExpensesService{}
 var budgetPlanService = budgetservice.BudgetService{}
+var mediaService = mediaservice.MediaService{}
 
-func DashboardService(AuthorizeID int) (model.OAData, error) {
-	userProfileData := model.OAData{}
+// var LineChartData = map[string]model.TotalAmountData{}
+type OAData struct {
+	TotalAmount model.TotalAmountData
+	UserDetail  model.UserDetail
+	BI          model.BIData
+}
+
+func DashboardService(AuthorizeID int) (OAData, error) {
+	userProfileData := OAData{}
 	totalExp, err := detailService.GetExpAmtByUserId(AuthorizeID)
 	if err != nil {
 		return userProfileData, err
@@ -35,25 +44,108 @@ func DashboardService(AuthorizeID int) (model.OAData, error) {
 		return userProfileData, err
 	}
 
-	ie := ChartService(AuthorizeID)
+	bi := BIDataService(AuthorizeID)
 
 	userProfileData.TotalAmount = totalAmount
 	userProfileData.UserDetail = userDetail
-	userProfileData.IEB = ie
+	userProfileData.BI = bi
 
 	return userProfileData, nil
 }
 
-func ChartService(AuthorizeID int) model.IEBData {
-	incomeData := incomeService.GetIncomes(AuthorizeID)
-	expData, _ := expensesService.GetExpenses(AuthorizeID)
+func BIDataService(AuthorizeID int) model.BIData {
 	planData, _ := budgetPlanService.GetBudgetsList(AuthorizeID)
+	mediaData, _ := mediaService.GetMedia(AuthorizeID)
 
-	ie := model.IEBData{
-		Incomes:  &incomeData,
-		Expenses: &expData,
-		Budget:   &planData,
+	var imgURLs []string
+	for _, media := range mediaData.Media {
+		imgURLs = append(imgURLs, media.ImgURL)
 	}
 
-	return ie
+	bi := model.BIData{
+		Budget:   &planData,
+		ImageSrc: imgURLs[0],
+	}
+	return bi
+}
+
+func ChartDataService(AuthorizeID int) map[string]model.TotalAmountData {
+	incomes := incomeService.GetAmountByDay(AuthorizeID)
+	expenses := expensesService.GetAmountByDay(AuthorizeID)
+
+	var LineChartData = map[string]model.TotalAmountData{}
+	LineChartData["Monday"] = model.TotalAmountData{}
+	LineChartData["Tuesday"] = model.TotalAmountData{}
+	LineChartData["Wednesday"] = model.TotalAmountData{}
+	LineChartData["Thursday"] = model.TotalAmountData{}
+	LineChartData["Friday"] = model.TotalAmountData{}
+	LineChartData["Saturday"] = model.TotalAmountData{}
+	LineChartData["Sunday"] = model.TotalAmountData{}
+
+	for _, income := range incomes {
+		switch income.Day {
+		case "Monday":
+			LineChartData["Monday"] = model.TotalAmountData{
+				Incomes: income.Amount,
+			}
+		case "Tuesday":
+			LineChartData["Tuesday"] = model.TotalAmountData{
+				Incomes: income.Amount,
+			}
+		case "Wednesday":
+			LineChartData["Wednesday"] = model.TotalAmountData{
+				Incomes: income.Amount,
+			}
+		case "Thursday":
+			LineChartData["Thursday"] = model.TotalAmountData{
+				Incomes: income.Amount,
+			}
+		case "Friday":
+			LineChartData["Friday"] = model.TotalAmountData{
+				Incomes: income.Amount,
+			}
+		case "Saturday":
+			LineChartData["Saturday"] = model.TotalAmountData{
+				Incomes: income.Amount,
+			}
+		case "Sunday":
+			LineChartData["Sunday"] = model.TotalAmountData{
+				Incomes: income.Amount,
+			}
+		}
+	}
+
+	for _, expense := range expenses {
+		switch expense.Day {
+		case "Monday":
+			LineChartData["Monday"] = model.TotalAmountData{
+				Expenses: expense.Amount,
+			}
+		case "Tuesday":
+			LineChartData["Tuesday"] = model.TotalAmountData{
+				Expenses: expense.Amount,
+			}
+		case "Wednesday":
+			LineChartData["Wednesday"] = model.TotalAmountData{
+				Expenses: expense.Amount,
+			}
+		case "Thursday":
+			LineChartData["Thursday"] = model.TotalAmountData{
+				Expenses: expense.Amount,
+			}
+		case "Friday":
+			LineChartData["Friday"] = model.TotalAmountData{
+				Expenses: expense.Amount,
+			}
+		case "Saturday":
+			LineChartData["Saturday"] = model.TotalAmountData{
+				Expenses: expense.Amount,
+			}
+		case "Sunday":
+			LineChartData["Sunday"] = model.TotalAmountData{
+				Expenses: expense.Amount,
+			}
+		}
+	}
+	return LineChartData
 }

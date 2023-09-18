@@ -12,27 +12,14 @@
 <body>
     <div class="wrapper d-flex align-items-stretch">
         {{ template "sidebar" }}
-        <div id="content" class="p-4 p-md-5">
+        <div id="content" class="p-4 p-md-3 dashboard-page">
             <nav class="navbar navbar-expand-lg mb-3">
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-primary">
                         <i class="fa fa-bars"></i>
                         <span class="sr-only">Toggle Menu</span>
                     </button>
-                    <div class="nav-content">
-                        <div>
-                            <h2 class="mx-2">Dashboard</h2>
-                        </div>
-                        <div class="user-profile">
-                            <div class="profile-head">
-                                <div class="img-area">
-                                    <div class="inner-area">
-                                        <img src="/static/img/profile/{{.UserDetail.Profile}}" alt="profile image">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <h2 class="mx-2">Dashboard</h2>
                     <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -47,21 +34,12 @@
                             <div class="project-info clearfix">
                                 <div class="project-info-left">
                                     <div class="icon box-shadow bg-blue text-white">
-                                        <i class="fa fa-briefcase"></i>
+                                        <i class="fa fa-archive"></i>
                                     </div>
                                 </div>
                                 <div class="project-info-right">
-                                    <span class="no text-blue weight-500 font-24">{{ len .IEB.Budget}}</span>
-                                    <p class="weight-400 font-18">Budget Plan</p>
-                                </div>
-                            </div>
-                            <div class="project-info-progress">
-                                <div class="row clearfix">
-                                    <div class="col-sm-6 text-muted weight-500">Target</div>
-                                    <div class="col-sm-6 text-right weight-500 font-14 text-muted">40</div>
-                                </div>
-                                <div class="progress" style="height: 10px;">
-                                    <div class="progress-bar bg-blue progress-bar-striped progress-bar-animated" role="progressbar" style="width: 40%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <span class="no text-blue weight-500 font-24">{{ len .BI.Budget}}</span>
+                                    <p class="weight-400">Budget Plan</p>
                                 </div>
                             </div>
                         </div>
@@ -71,21 +49,13 @@
                             <div class="project-info clearfix">
                                 <div class="project-info-left">
                                     <div class="icon box-shadow bg-light-green text-white">
-                                        <i class="fa fa-handshake-o"></i>
+                                        <i class="fa fa-usd"></i>
                                     </div>
                                 </div>
                                 <div class="project-info-right">
-                                    <span class="no text-light-green weight-500 font-24">{{.TotalAmount.Incomes}}</span>
-                                    <p class="weight-400 font-18">My Incomes</p>
-                                </div>
-                            </div>
-                            <div class="project-info-progress">
-                                <div class="row clearfix">
-                                    <div class="col-sm-6 text-muted weight-500">Target</div>
-                                    <div class="col-sm-6 text-right weight-500 font-14 text-muted">50</div>
-                                </div>
-                                <div class="progress" style="height: 10px;">
-                                    <div class="progress-bar bg-light-green progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <span class="no text-light-green weight-500 font-24"
+                                        id="income-amt">{{.TotalAmount.Incomes}}</span>
+                                    <p class="weight-400">Earning</p>
                                 </div>
                             </div>
                         </div>
@@ -94,22 +64,29 @@
                         <div class="bg-white oa-box p-3">
                             <div class="project-info clearfix">
                                 <div class="project-info-left">
-                                    <div class="icon box-shadow bg-light-orange text-white">
-                                        <i class="fa fa-list-alt"></i>
+                                    <div class="block">
+                                        <div class="box" id="exp-box">
+                                            <p class="number">
+                                                <span class="num" id="expnum"></span>
+                                                <span class="sub">%</span>
+                                            </p>
+                                        </div>
+                                        <span class="dots" id="exp-dot"></span>
+                                        <svg class="svg" id="exp-svg">
+                                            <defs>
+                                                <linearGradient id="gradientStyle">
+                                                    <stop offset="0%" stop-color="rgb(255, 99, 132)"/>
+                                                    <stop offset="100%" stop-color="#b7b5b5" />
+                                                </linearGradient>
+                                            </defs>
+                                            <circle class="circle" cx="40" cy="40" r="32" style="stroke: url(#gradientStyle)"></circle>
+                                        </svg>
                                     </div>
                                 </div>
                                 <div class="project-info-right">
-                                    <span class="no text-light-orange weight-500 font-24">{{.TotalAmount.Expenses}}</span>
-                                    <p class="weight-400 font-18">Total Expenses</p>
-                                </div>
-                            </div>
-                            <div class="project-info-progress">
-                                <div class="row clearfix">
-                                    <div class="col-sm-6 text-muted weight-500">Review</div>
-                                    <div class="col-sm-6 text-right weight-500 font-14 text-muted">Good</div>
-                                </div>
-                                <div class="progress" style="height: 10px;">
-                                    <div class="progress-bar bg-light-orange progress-bar-striped progress-bar-animated" role="progressbar" style="width: 80%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <span class="no text-light-orange weight-500 font-24"
+                                        id="exp-amt">{{.TotalAmount.Expenses}}</span>
+                                    <p class="weight-400">Expenses</p>
                                 </div>
                             </div>
                         </div>
@@ -118,32 +95,61 @@
                         <div class="bg-white oa-box p-3 margin-5">
                             <div class="project-info clearfix">
                                 <div class="project-info-left">
-                                    <div class="icon box-shadow bg-light-purple text-white">
-                                        <i class="fa fa-podcast"></i>
-                                    </div>
+                                    <div class="block">
+                                        <div class="box" id="net-box">
+                                            <p class="number">
+                                                <span class="num" id="netnum"></span>
+                                                <span class="sub">%</span>
+                                            </p>
+                                        </div>
+                                        <span class="dots" id="net-dot"></span>
+                                        <svg class="svg">
+                                            <defs>
+                                                <linearGradient id="gradientStyle01">
+                                                    <stop offset="0%" stop-color="#a683eb"/>
+                                                    <stop offset="100%" stop-color="#b7b5b5" />
+                                                </linearGradient>
+                                            </defs>
+                                            <circle class="circle" cx="40" cy="40" r="32" style="stroke: url(#gradientStyle01)"></circle>
+                                        </svg>
+                                </div>
                                 </div>
                                 <div class="project-info-right">
-                                    <span class="no text-light-purple weight-500 font-24">5.1 Lakhs</span>
-                                    <p class="weight-400 font-18">Net Income</p>
-                                </div>
-                            </div>
-                            <div class="project-info-progress">
-                                <div class="row clearfix">
-                                    <div class="col-sm-6 text-muted weight-500">Review</div>
-                                    <div class="col-sm-6 text-right weight-500 font-14 text-muted">Average</div>
-                                </div>
-                                <div class="progress" style="height: 10px;">
-                                    <div class="progress-bar bg-light-purple progress-bar-striped progress-bar-animated" role="progressbar" style="width: 75%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <span class="no text-light-purple weight-500 font-24" id="net-amt"></span>
+                                    <p class="weight-400">Net Amount</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-4 mb-3">
-                        Hello
+                <div class="row info-sec">
+                    <div class="col-md-4">
+                        <div class="personal-info">
+                            <div class="user-profile mb-3">
+                                <div class="profile-head my-3">
+                                    <div class="img-area">
+                                        <img src="/static/img/profile/{{.UserDetail.Profile}}" alt="profile image">
+                                    </div>
+                                </div>
+                                <div class="profile-content">
+                                    <div class="name">{{.UserDetail.Name}}</div>
+                                    <div class="about">{{.UserDetail.Job}}</div>
+                                    <div class="about">{{.UserDetail.Email}}</div>
+                                </div>
+                            </div>
+                            <div class="noti-sec p-2">
+                                <a href="/dashboard/media" class="card">
+                                    <img src="/static/img/uploads/{{.BI.ImageSrc}}" alt="balloon with an emoji face"
+                                        class="card__img">
+                                    <span class="card__footer">
+                                        <span>Uploaded Media Gallery</span>
+                                        <span>Expenses slips</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-8 mb-3">
+                    <div class="col-md-8">
                         <div class="chart-container">
                             <canvas id="myChart"></canvas>
                         </div>
@@ -152,66 +158,8 @@
             </div>
         </div>
         {{ template "js" }}
-        <script>
-            const ctx = document.getElementById('myChart');
-            const data = {
-                datasets: [{
-                    label: "Incomes",
-                    data: [{
-                        x: '2021-11-06 23:39:30',
-                        y: 50
-                    }, {
-                        x: '2021-11-07 01:00:28',
-                        y: 60
-                    }, {
-                        x: '2021-11-07 09:00:28',
-                        y: 20
-                    }],
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1,
-                }, {
-                    label: "Expenses",
-                    data: [{
-                        x: '2021-11-06 23:39:30',
-                        y: 60
-                    }, {
-                        x: '2021-11-07 01:00:28',
-                        y: 30
-                    }, {
-                        x: '2021-11-07 09:00:28',
-                        y: 70
-                    }],
-                    fill:false,
-                    borderColor: 'rgb(255, 99, 132)',
-                    tension: 0.1,
-                }]
-            };
-            new Chart(ctx, {
-                type: 'line',
-                data: data,
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        },
-                        title: {
-                            display: false,
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit : 'day'
-                        }
-                    }
-                },
-            });
-
-        </script>
+        <script src="/static/js/chart.js"></script>
+        <script src="/static/js/dashboard.js"></script>
 </body>
 
 </html>

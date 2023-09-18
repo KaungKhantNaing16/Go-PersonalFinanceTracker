@@ -126,3 +126,52 @@ func (i *IncomeRepository) GetTotalAmount() (int, error) {
 
 	return totalAmount, nil
 }
+
+func (i *IncomeRepository) GetAmountByDay(id int) []model.DailyAmount {
+	DB := config.NewDatabase()
+	query := `SELECT
+				CASE
+					WHEN dayname(created_at) = "Sunday" THEN "Sunday" 
+					WHEN dayname(created_at) = "Monday" THEN "Monday" 
+					WHEN dayname(created_at) = "Tuesday" THEN "Tuesday" 
+					WHEN dayname(created_at) = "Wednesday" THEN "Wednesday"
+					WHEN dayname(created_at) = "Thursday" THEN "Thursday" 
+					WHEN dayname(created_at) = "Friday" THEN "Friday" 
+					WHEN dayname(created_at) = "Saturday" THEN "Saturday"
+				END AS DayName,
+				SUM(CASE
+					WHEN dayname(created_at) = "Sunday" THEN amount 
+					WHEN dayname(created_at) = "Monday" THEN amount
+					WHEN dayname(created_at) = "Tuesday" THEN amount
+					WHEN dayname(created_at) = "Wednesday" THEN amount
+					WHEN dayname(created_at) = "Thursday" THEN amount
+					WHEN dayname(created_at) = "Friday" THEN amount
+					WHEN dayname(created_at) = "Saturday" THEN amount
+				END) AS Amount
+			FROM incomes
+			WHERE week(created_at) = week(now())
+			AND uid = ?
+			group by DayName;`
+
+	rows, err := DB.Query(query, id)
+	if err != nil {
+		log.Println("Error querying the rows", err)
+	}
+	defer rows.Close()
+
+	chartDataArr := []model.DailyAmount{}
+	for rows.Next() {
+		var chartData model.DailyAmount
+		err = rows.Scan(&chartData.Day, &chartData.Amount)
+		if err != nil {
+			log.Println("Error scaning the row", err)
+		}
+
+		chartDataArr = append(chartDataArr, chartData)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return chartDataArr
+}

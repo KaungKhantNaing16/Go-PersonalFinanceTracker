@@ -3,6 +3,7 @@ package dashboardcontroller
 import (
 	mail "Go-PersonalFinanceTracker/pkg/mails"
 	dashboardservice "Go-PersonalFinanceTracker/pkg/services/dashboard"
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"text/template"
@@ -31,7 +32,8 @@ func DashboardHandler(writer http.ResponseWriter, req *http.Request) {
 	loadTemplates()
 	oaDataArr, err := dashboardservice.DashboardService(AuthorizeID)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	err = tmpl.ExecuteTemplate(writer, "index.html", oaDataArr)
@@ -39,6 +41,25 @@ func DashboardHandler(writer http.ResponseWriter, req *http.Request) {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func ChartHandler(writer http.ResponseWriter, req *http.Request) {
+	userID, _ := req.Cookie("UserID")
+	AuthorizeID, err := strconv.Atoi(userID.Value)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	chartData := dashboardservice.ChartDataService(AuthorizeID)
+	jsonData, err := json.Marshal(chartData)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	writer.Write(jsonData)
 }
 
 func SendAlert(expAmt int, inAmt int) {

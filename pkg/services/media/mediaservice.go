@@ -12,13 +12,8 @@ type MediaService struct {
 	mediaRepo mediarepository.MediaRepository
 }
 
-type MediaData struct {
-	Expenses []model.Expenses
-	Media    []model.ExpenseMediaData
-}
-
-func (m *MediaService) GetMedia(userID int) (MediaData, error) {
-	var mediaDataArr MediaData
+func (m *MediaService) GetMedia(userID int) (model.MediaData, error) {
+	var mediaDataArr model.MediaData
 	expenses, err := expensesService.GetExpenses(userID)
 	if err != nil {
 		return mediaDataArr, err

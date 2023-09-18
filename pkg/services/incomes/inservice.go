@@ -53,3 +53,7 @@ func (s *IncomeService) UpdateIncome(income model.Income) error {
 func (s *IncomeService) GetTotalAmount() (int, error) {
 	return s.repository.GetTotalAmount()
 }
+
+func (s *IncomeService) GetAmountByDay(userId int) []model.DailyAmount {
+	return s.repository.GetAmountByDay(userId)
+}

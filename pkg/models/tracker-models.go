@@ -67,18 +67,20 @@ type ExpenseMediaData struct {
 	Date, CreateAt, UpdatedAt  time.Time
 }
 
-type IEBData struct {
-	Incomes  *[]Income
-	Expenses *[]Expenses
-	Budget   *[]Budget
+type MediaData struct {
+	Expenses []Expenses
+	Media    []ExpenseMediaData
 }
 
 type TotalAmountData struct {
-	Expenses, Incomes int
+	Incomes, Expenses int
+}
+type DailyAmount struct {
+	Day    string
+	Amount int
 }
 
-type OAData struct {
-	TotalAmount TotalAmountData
-	UserDetail  UserDetail
-	IEB         IEBData
+type BIData struct {
+	Budget   *[]Budget
+	ImageSrc string
 }
