@@ -52,7 +52,8 @@ func GetExpenses(writer http.ResponseWriter, request *http.Request) {
 
 	expenses, err := expensesService.GetExpenses(AuthorizeID)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	loadTemplates("list")
@@ -67,12 +68,14 @@ func CreateExpenses(writer http.ResponseWriter, request *http.Request) {
 	userID, _ := request.Cookie("UserID")
 	AuthorizeID, err := strconv.Atoi(userID.Value)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	categories, err := categoriesService.GetCategories(AuthorizeID)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	loadTemplates("create")
@@ -87,12 +90,14 @@ func GetExpenseDetail(writer http.ResponseWriter, request *http.Request) {
 	var expense model.Expenses
 	expense, err := expensesService.GetExpensesById(request)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	mediaArr, err := mediaService.GetMediaByExpId(expense.ID)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	hasMedia := true
@@ -118,7 +123,8 @@ func GetExpenseDetail(writer http.ResponseWriter, request *http.Request) {
 func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 	expense, err := expensesService.GetExpensesById(request)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	userID, _ := request.Cookie("UserID")
@@ -130,7 +136,8 @@ func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 
 	categories, err := categoriesService.GetCategories(AuthorizeID)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	responseData := FormData{
@@ -148,7 +155,8 @@ func EditExpenses(writer http.ResponseWriter, request *http.Request) {
 
 func ConfirmExpense(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
+		http.Error(writer, "Invalid Request Method", http.StatusInternalServerError)
+		return
 	}
 
 	validatedData := request_validation.ExpensesRequestValiation(writer, request)
@@ -163,7 +171,8 @@ func ConfirmExpense(writer http.ResponseWriter, request *http.Request) {
 
 func SubmitExpenses(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
+		http.Error(writer, "Invalid Request Method", http.StatusInternalServerError)
+		return
 	}
 
 	validatedData := request_validation.ExpensesRequestValiation(writer, request)
@@ -171,7 +180,8 @@ func SubmitExpenses(writer http.ResponseWriter, request *http.Request) {
 	if validatedData.ID != 0 {
 		fmt.Println("To update expense")
 		if err := expensesService.UpdateExpenses(validatedData); err != nil {
-			tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
 		}
 		http.Redirect(writer, request, "/dashboard/expenses", http.StatusFound)
 	} else {

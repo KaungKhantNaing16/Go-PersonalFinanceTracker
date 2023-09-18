@@ -10,8 +10,8 @@
 <body>
     <div class="wrapper d-flex align-items-stretch">
         {{ template "sidebar" }}
-        <div id="content" class="p-4 p-md-5">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div id="content" class="p-4 p-md-3">
+            <nav class="navbar navbar-expand-lg mb-3">
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-primary">
                         <i class="fa fa-bars"></i>
@@ -45,15 +45,17 @@
                     <select class="form-select" aria-label="Default select example" name="category" >
                         <option value="{{.CateID}}" selected >{{.CateID}}</option>
                     </select>
+                    {{ if not .CateID }}<small class="text-danger">Please choose correct category</small>{{end}}
                 </div>
                 <div class="mb-3">
                     <label for="date">Date:</label>
                     <input type="text" class="form-control" id="dateconfirm" name="date" value="{{.Date}}"/>
+                    <small class="text-danger" id="date-err"></small>
                 </div>
                 
                 <div class="btn-group mt-5">
                     <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()" id="backBtn">Back</button>
-                    <input type="submit" class="btn btn-primary" value="Submit">
+                    <input type="submit" class="btn btn-primary" value="Submit" id="submit-btn" {{ if not .CateID }} disabled {{end}} >
                 </div>
             </form>
         </div>
@@ -63,6 +65,23 @@
         flatpickr("#dateconfirm", {
             readOnly: true,
         });
+
+        // check validation and show error message for Date
+        const submitBtn = document.getElementById('submit-btn');
+        const errMsg = document.getElementById('date-err');
+
+        const date = Date.parse(document.getElementById("dateconfirm").value);
+        const invalidDate = Date.parse('0001-01-01');
+        const dateErr = date == invalidDate ? true : false;
+
+        if (dateErr) {
+            submitBtn.setAttribute('disabled','');
+            errMsg.innerText = 'Please choose correct date';
+        } else {
+            submitBtn.removeAttribute('disabled');
+            errMsg.innerText = '';
+        }
+
     </script>
 </body>
 </html>

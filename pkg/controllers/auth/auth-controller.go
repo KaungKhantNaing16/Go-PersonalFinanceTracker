@@ -49,7 +49,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 
 func CheckCredentials(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		http.Error(writer, "Invalid Request Method", http.StatusInternalServerError)
+		http.Error(writer, "Invalid Request Method", http.StatusBadRequest)
 		return
 	}
 

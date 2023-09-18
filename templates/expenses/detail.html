@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,73 +8,80 @@
     <title>Expenses | Details</title>
     {{ template "css" }}
 </head>
+
 <body>
     <div class="wrapper d-flex align-items-stretch">
         {{ template "sidebar" }}
-        <div id="content" class="p-4 p-md-5">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div id="content" class="p-4 p-md-3">
+            <nav class="navbar navbar-expand-lg mb-3">
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-primary">
                         <i class="fa fa-bars"></i>
                         <span class="sr-only">Toggle Menu</span>
                     </button>
                     <h2 class="mx-2">Expense Details</h2>
-                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa fa-bars"></i>
                     </button>
-                </div> 
-            </nav>  
-            <ul class="list-group list-group-flush rounded mb-3">
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-sm-2">Title</div>
-                        <div class="col-sm-10"><b>{{.Expense.Title}}</b></div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-sm-2">Amount</div>
-                        <div class="col-sm-10"><b>{{.Expense.Amount}}</b></div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-sm-2">Description</div>
-                        <div class="col-sm-10"><b>{{.Expense.Description}}</b></div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-sm-2">Category</div>
-                        <div class="col-sm-10"><b>{{.Expense.CateName}}</b></div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-sm-2">Date</div>
-                        <div class="col-sm-10"><b>{{.Expense.Date.Format "2006-01-02"}}</b></div>
-                    </div>
-                </li>
-            </ul>
-            {{ if .IsHasMedia }}
-            <div class="image-showcase">
-                <div class="row">
-                    {{ range .Media }}
-                    <div class="col-md-3 img-box  pb-1">
-                        <div class="img-container rounded" style="background-image: url(/static/img/uploads/{{.}});">
-                            &nbsp;
+                </div>
+            </nav>
+            <div class="detail-sec">
+                <ul class="list-group list-group-flush rounded mb-3">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-sm-2">Title</div>
+                            <div class="col-sm-10"><b>{{.Expense.Title}}</b></div>
                         </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-sm-2">Amount</div>
+                            <div class="col-sm-10"><b>{{.Expense.Amount}}</b></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-sm-2">Description</div>
+                            <div class="col-sm-10"><b>{{.Expense.Description}}</b></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-sm-2">Category</div>
+                            <div class="col-sm-10"><b>{{.Expense.CateName}}</b></div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-sm-2">Date</div>
+                            <div class="col-sm-10"><b>{{.Expense.Date.Format "2006-01-02"}}</b></div>
+                        </div>
+                    </li>
+                </ul>
+                {{ if .IsHasMedia }}
+                <div class="image-showcase">
+                    <div class="row">
+                        {{ range .Media }}
+                        <div class="col-md-3 img-box  pb-1">
+                            <div class="img-container rounded"
+                                style="background-image: url(/static/img/uploads/{{.}});">
+                                &nbsp;
+                            </div>
+                        </div>
+                        {{ end }}
                     </div>
-                    {{ end }}
-                </div>  
-            </div>
-            {{ end }}
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                <a href="/dashboard/expenses" class="btn btn-primary me-md-2 action-btn">Back</a>
-                <a href="/dashboard/expenses/edit/{{.Expense.ID}}" class="btn btn-warning action-btn">Edit</a>
+                </div>
+                {{ end }}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                    <a href="/dashboard/expenses" class="btn btn-primary me-md-2 action-btn">Back</a>
+                    <a href="/dashboard/expenses/edit/{{.Expense.ID}}" class="btn btn-warning action-btn">Edit</a>
+                </div>
             </div>
         </div>
     </div>
     {{ template "js" }}
 </body>
+
 </html>

@@ -1,4 +1,5 @@
 $(document).ready(function () {
+	ImgUpload();
 	$('#example').DataTable();
 	const USERID = "UserID";
 	let cookieArr = document.cookie.split(";");
@@ -34,10 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 })(jQuery);
-
-$(document).ready(function () {
-	ImgUpload();
-});
 
 function ImgUpload() {
 	var imgWrap = "";

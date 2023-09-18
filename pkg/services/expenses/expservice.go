@@ -74,3 +74,7 @@ func (e *ExpensesService) UpdateExpenses(expense model.Expenses) error {
 	fmt.Println("Passed Services")
 	return e.expRepo.UpdateExpenses(expense)
 }
+
+func (e *ExpensesService) GetAmountByDay(userId int) []model.DailyAmount {
+	return e.expRepo.GetAmountByDay(userId)
+}

@@ -13,6 +13,7 @@ import (
 )
 
 var tmpl *template.Template
+var mediaService = mediaservice.MediaService{}
 
 const MAX_UPLOAD_SIZE = 1024 * 1024
 
@@ -22,15 +23,12 @@ func loadTemplates() {
 
 	tmpl = template.Must(template.ParseFiles(
 		templatePartialDir+"sideBar.html",
-		templatePartialDir+"dataTable.html",
 		templatePartialDir+"js.html",
 		templatePartialDir+"css.html",
 		templatesDir+"index.html",
 		"templates/error.html",
 	))
 }
-
-var mediaService = mediaservice.MediaService{}
 
 func GetMedia(writer http.ResponseWriter, request *http.Request) {
 	userID, _ := request.Cookie("UserID")
@@ -42,7 +40,8 @@ func GetMedia(writer http.ResponseWriter, request *http.Request) {
 
 	mediaDataArr, err := mediaService.GetMedia(AuthorizeID)
 	if err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	loadTemplates()
@@ -55,7 +54,8 @@ func GetMedia(writer http.ResponseWriter, request *http.Request) {
 
 func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		tmpl.ExecuteTemplate(writer, "error.html", "Invalid Request Method")
+		http.Error(writer, "Invalid Request Method", http.StatusBadRequest)
+		return
 	}
 
 	// Limit the file size to 10MB;
@@ -131,7 +131,8 @@ func HandleUploadFile(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if err = mediaService.CreateMedia(fileNameArr, expenseId); err != nil {
-		tmpl.ExecuteTemplate(writer, "error.html", err.Error())
+		http.Error(writer, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	http.Redirect(writer, request, "/dashboard/media", http.StatusFound)

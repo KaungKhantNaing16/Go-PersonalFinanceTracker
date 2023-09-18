@@ -10,8 +10,8 @@
 <body>
     <div class="wrapper d-flex align-items-stretch">
         {{ template "sidebar" }}
-        <div id="content" class="p-4 p-md-5">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div id="content" class="p-4 p-md-3">
+            <nav class="navbar navbar-expand-lg mb-3">
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-primary">
                         <i class="fa fa-bars"></i>
@@ -44,7 +44,8 @@
                 </div>
                 
                 <div class="btn-group mt-5">
-                    <input type="reset" class="btn btn-dark me-2" value="Clear">
+                    <!-- <input type="reset" class="btn btn-dark me-2" value="Clear"> -->
+                    <button type="button" class="btn btn-dark me-2" onclick="clearForm()">Clear</button>
                     <input type="submit" class="btn btn-primary" value="Confirm">
                 </div>
             </form>

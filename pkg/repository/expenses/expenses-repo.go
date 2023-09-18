@@ -131,3 +131,52 @@ func (e *ExpensesRepository) GetTotalAmountByCate(cateID int) (model.CateTotalAm
 
 	return cateAmount, nil
 }
+
+func (e *ExpensesRepository) GetAmountByDay(id int) []model.DailyAmount {
+	DB := config.NewDatabase()
+	query := `SELECT
+				CASE
+					WHEN dayname(date) = "Sunday" THEN "Sunday" 
+					WHEN dayname(date) = "Monday" THEN "Monday" 
+					WHEN dayname(date) = "Tuesday" THEN "Tuesday" 
+					WHEN dayname(date) = "Wednesday" THEN "Wednesday"
+					WHEN dayname(date) = "Thursday" THEN "Thursday" 
+					WHEN dayname(date) = "Friday" THEN "Friday" 
+					WHEN dayname(date) = "Saturday" THEN "Saturday"
+				END AS DayName,
+				SUM(CASE
+					WHEN dayname(date) = "Sunday" THEN amount 
+					WHEN dayname(date) = "Monday" THEN amount
+					WHEN dayname(date) = "Tuesday" THEN amount
+					WHEN dayname(date) = "Wednesday" THEN amount
+					WHEN dayname(date) = "Thursday" THEN amount
+					WHEN dayname(date) = "Friday" THEN amount
+					WHEN dayname(date) = "Saturday" THEN amount
+				END) AS Amount
+			FROM expenses
+			WHERE week(created_at) = week(now())
+			AND uid = ?
+			group by DayName;`
+
+	rows, err := DB.Query(query, id)
+	if err != nil {
+		log.Println("Error querying the rows", err)
+	}
+	defer rows.Close()
+
+	chartDataArr := []model.DailyAmount{}
+	for rows.Next() {
+		var chartData model.DailyAmount
+		err = rows.Scan(&chartData.Day, &chartData.Amount)
+		if err != nil {
+			log.Println("Error scaning the row", err)
+		}
+
+		chartDataArr = append(chartDataArr, chartData)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return chartDataArr
+}

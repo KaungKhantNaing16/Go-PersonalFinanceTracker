@@ -2,7 +2,7 @@ package request_validation
 
 import (
 	model "Go-PersonalFinanceTracker/pkg/models"
-	"log"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -18,19 +18,19 @@ func ExpensesRequestValiation(writer http.ResponseWriter, request *http.Request)
 	if expIdStr != "" {
 		expID, _ = strconv.Atoi(expIdStr)
 		if expID == 0 {
-			log.Fatal("Invalid expense id value")
+			fmt.Println("Invalid expense id value")
 		}
 	}
 
 	userIdStr := request.FormValue("user_id")
 	userId, err := strconv.Atoi(userIdStr)
 	if err != nil {
-		log.Fatal("Invalid user id value")
+		fmt.Println("Invalid user id value")
 	}
 
 	title := request.Form["title"][0]
 	if title == "" {
-		log.Fatal("Invalid title value")
+		fmt.Println("Invalid title value")
 	}
 
 	description := request.Form["desc"][0]
@@ -38,19 +38,19 @@ func ExpensesRequestValiation(writer http.ResponseWriter, request *http.Request)
 	cateStr := request.FormValue("category")
 	category, err := strconv.Atoi(cateStr)
 	if err != nil {
-		log.Fatal("Invalid category value")
+		fmt.Println("Invalid category value")
 	}
 
 	amoutStr := request.FormValue("amount")
 	amount, err := strconv.Atoi(amoutStr)
 	if err != nil {
-		log.Fatal("Invalid amount value")
+		fmt.Println("Invalid amount value")
 	}
 
 	dateStr := request.FormValue("date")
 	date, err := time.Parse(layout, dateStr)
-	if err != nil {
-		log.Fatal("Invalid date value")
+	if date.IsZero() {
+		fmt.Println("Invalid date format")
 	}
 
 	validatedData := model.Expenses{
@@ -62,5 +62,6 @@ func ExpensesRequestValiation(writer http.ResponseWriter, request *http.Request)
 		Amount:      amount,
 		Date:        date,
 	}
+
 	return validatedData
 }
