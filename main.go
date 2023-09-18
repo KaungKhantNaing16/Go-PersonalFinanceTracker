@@ -2,32 +2,26 @@ package main
 
 import (
 	"Go-PersonalFinanceTracker/pkg/routes"
-	"fmt"
+	"log"
 	"net/http"
-	"text/template"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
-func IndexHandler(writer http.ResponseWriter, req *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/partials/layout.html", "templates/index.html"))
-
-	err := tmpl.ExecuteTemplate(writer, "layout.html", nil)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 func main() {
 	r := mux.NewRouter()
-
 	fs := http.FileServer(http.Dir("static/"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
-	r.HandleFunc("/", IndexHandler)
-	routes.RegisterExpensesRoutes(r)
-	routes.RegisterIncomeRoutes(r)
-	err := http.ListenAndServe(":8080", r)
-	fmt.Println(err)
+	routes.RegisterRouters(r)
+	http.Handle("/", r)
+	srv := &http.Server{
+		Handler:      r,
+		Addr:         "127.0.0.1:8080",
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
+	log.Fatal(srv.ListenAndServe())
 }

@@ -1,41 +1,59 @@
 package inservice
 
 import (
-	models "Go-PersonalFinanceTracker/pkg/models"
-	inrepo "Go-PersonalFinanceTracker/pkg/repository/incomes"
+	model "Go-PersonalFinanceTracker/pkg/models"
+	inrepository "Go-PersonalFinanceTracker/pkg/repository/incomes"
 	"errors"
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 var ErrIDIsNotValid = errors.New("Id is not valid")
-
-type IIncomeServices interface {
-	GetIncomes() ([]models.Income, error)
-	GetIncomeById() (models.Income, error)
-	CreateIncome() error
-	UpdateIncome() error
-	DeleteIncome() error
-}
+var ErrIncomeNotFound = errors.New("Income not found")
 
 type IncomeService struct {
-	expRepo inrepo.IIncomeRepository
+	repository inrepository.IncomeRepository
 }
 
-func (i *IncomeService) GetIncomes() {
-
+func (s *IncomeService) GetIncomes(id int) []model.Income {
+	return s.repository.GetIncomes(id)
 }
 
-func (i *IncomeService) GetIncomeById() {
+func (s *IncomeService) GetIncomeById(request *http.Request) (model.Income, error) {
+	params := mux.Vars(request)
+	incomeId, err := strconv.Atoi(params["id"])
+	fmt.Println("Income Id is :", incomeId)
+	if err != nil {
+		return model.Income{}, ErrIDIsNotValid
+	}
 
+	income, err := s.repository.GetIncomeById(incomeId)
+	if err != nil {
+		return income, ErrIncomeNotFound
+	}
+
+	return income, nil
 }
 
-func (i *IncomeService) CreateIncome() {
-
+func (s *IncomeService) CreateIncomes(incomes []model.Income) error {
+	return s.repository.CreateIncome(incomes)
 }
 
-func (i *IncomeService) UpdateIncome() {
+func (s *IncomeService) UpdateIncome(income model.Income) error {
+	if income.ID == 0 {
+		return ErrIDIsNotValid
+	}
 
+	return s.repository.UpdateIncome(income)
 }
 
-func (i *IncomeService) DeleteIncome() {
+func (s *IncomeService) GetTotalAmount() (int, error) {
+	return s.repository.GetTotalAmount()
+}
 
+func (s *IncomeService) GetAmountByDay(userId int) []model.DailyAmount {
+	return s.repository.GetAmountByDay(userId)
 }

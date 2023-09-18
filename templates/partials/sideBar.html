@@ -1,0 +1,52 @@
+{{ define "sidebar" }}
+<nav id="sidebar">
+    <h1 class="my-3">
+        <a href="/dashboard/" class="logo">
+            <img src="/static/img/logo-icon.png" alt="logo"> PFT
+        </a>
+    </h1>
+    <div class="side-content">
+        <ul class="list-unstyled components mb-5">
+            <li class="menu-item">
+                <a class="menu-link d-flex align-items-center" href="/dashboard/">
+                    <i class="fa fa-bar-chart"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link d-flex align-items-center" href="/dashboard/incomes">
+                    <i class="fa fa-usd"></i>
+                    <span>Income List</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link d-flex align-items-center" href="/dashboard/expenses">
+                    <i class="fa fa-handshake-o"></i>
+                    <span>Expenses List</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link d-flex align-items-center" href="/dashboard/media">
+                    <i class="fa fa-cloud-upload"></i>
+                    <span>Upload Media List</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link d-flex align-items-center" href="/dashboard/budget">
+                    <i class="fa fa-th-large"></i>
+                    <span>Budget Plan List</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="logout-btn">
+        <a href="/dashboard/confirm" class="btn btn-outline-light"><i class="fa fa-sign-out me-1"></i>logout</a>
+    </div>
+    <div class="footer">
+        <p>
+            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved.
+        </p>
+    </div>
+</nav>
+{{ end }}

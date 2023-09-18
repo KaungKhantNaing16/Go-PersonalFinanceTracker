@@ -1,0 +1,4 @@
+package catecontroller
+
+func GetCategories() {
+}

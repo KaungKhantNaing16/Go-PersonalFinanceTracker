@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media List</title>
+    {{ template "css" }}
+</head>
+
+<body>
+    <div class="wrapper d-flex align-items-stretch">
+        {{ template "sidebar" }}
+        <div id="content" class="p-4 p-md-3">
+            <nav class="navbar navbar-expand-lg mb-3">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                        <i class="fa fa-bars"></i>
+                        <span class="sr-only">Toggle Menu</span>
+                    </button>
+                    <h2 class="mx-2">Media</h2>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+            <div class="container img-upload">
+                <form action="/dashboard/media/upload" method="post" enctype="multipart/form-data">
+                    <div class="upload__box">
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3 select-img">
+                                <div class="upload__btn-box">
+                                    <label class="upload__btn">
+                                        <p>Upload images</p>
+                                        <input type="file" name="imgfiles" data-max_length="20" accept="image/jpg, image/jpeg, image/png" class="upload__inputfile" multiple>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 select-expense">
+                                <div class="py-2 required"><label for="category" class="form-label text-light ps-2">Expense Title</label></div>
+                                <div class="select-box">
+                                    <select class="form-select" aria-label="Default select example" name="expID">
+                                        <option selected>Select Expense</option>
+                                        {{ range .Expenses }}
+                                            <option value="{{.ID}}">{{.Title}}</option>
+                                        {{ end }}
+                                    </select>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="upload__img-wrap"></div>
+                    </div>
+                    <input type="submit" value="Submit" class="btn btn-primary submit-btn">
+                </form>
+            </div>
+            <div class="list-table_sec">
+                <div class="image-showcase">
+                    <div class="row">
+                        {{ range .Media }}
+                        <div class="col-md-3 img-box pb-1">
+                            <div class="img-container rounded" style="background-image: url(/static/img/uploads/{{.ImgURL}});">
+                                &nbsp;
+                            </div>
+                        </div>
+                        {{ end }}
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ template "js" }}
+</body>
+</html>

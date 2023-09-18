@@ -1,11 +1,69 @@
-{{ define "title" }} Incomes List {{ end }}
-{{ define "pageTtl" }} Incomes List {{ end }}
-{{ define "main" }}
-<p>
-    この場合において、同法第四十三条第二項中「次の各号に掲げる日のうち最先の日から一年四月」とあるのは「 商標登録出願の日から三月」と、
-    同法第四十三条の二第二項中「又は世界貿易機関の加盟国」
-    とあるのは「、世 界貿易機関の加盟国又は商標法条約の締約国 」と 、 
-    同項中「 若 し くは 世界貿易機関の加盟国の国民」とあるのは「、世界貿易機関の加盟国の国民若しくは商標法条約の締約国の国民 」と、
-    同条第三項 中 「前 二項 」と ある のは「 前項」と 読み替えるも の とす る。 
-</p>
-{{ end }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incomes List</title>
+    {{ template "css" }}
+</head>
+<body>
+    <div class="wrapper d-flex align-items-stretch">
+        {{ template "sidebar" }}
+        <div id="content" class="p-4 p-md-3">
+            <nav class="navbar navbar-expand-lg mb-3">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                        <i class="fa fa-bars"></i>
+                        <span class="sr-only">Toggle Menu</span>
+                    </button>
+                    <h2 class="mx-2">Incomes</h2>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div> 
+            </nav>
+            <div class="d-grid gap-2 d-md-flex justify-content mb-5">
+                <form action="/dashboard/incomes/upload" method="post" enctype="multipart/form-data">
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control file-upload" id="inputGroupFile03" name="file" accept=".csv, .xlsx">
+                        <input type="submit" class="btn btn-outline-secondary" id="inputGroupFileAddon03" value="Upload">
+                      </div>
+                </form>
+            </div>
+            <div class="list-table_sec">
+                <table id="example" class="table table-striped .table-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>FileURL</th>
+                            <th>Create date</th>
+                            <th>Update date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ range .Incomes }}
+                        <tr>
+                            <td>{{.Title}}</td>
+                            <td>{{.Description}}</td>
+                            <td>{{.Amount}}</td>
+                            <td>{{.FileURL}}</td>
+                            <td>{{.CreatedAt.Format "2006-01-02"}}</td>
+                            <td>{{.UpdatedAt.Format "2006-01-02"}}</td>
+                            <td>
+                                <a href="/dashboard/incomes/{{.ID}}" class="btn btn-success btn-sm action-btn">Detail</a>
+                                <a href="/dashboard/incomes/edit/{{.ID}}" class="btn btn-warning btn-sm action-btn">Edit</a>
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {{ template "js" }}
+</body>
+</html>

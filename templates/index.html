@@ -1,11 +1,165 @@
-{{ define "title" }} Dashboard {{ end }}
-{{ define "pageTtl" }} Dashboard {{ end }}
-{{ define "main" }}
-    <p>
-        この場合において、同法第四十三条第二項中「次の各号に掲げる日のうち最先の日から一年四月」とあるのは「 商標登録出願の日から三月」と、
-        同法第四十三条の二第二項中「又は世界貿易機関の加盟国」
-        とあるのは「、世 界貿易機関の加盟国又は商標法条約の締約国 」と 、 
-        同項中「 若 し くは 世界貿易機関の加盟国の国民」とあるのは「、世界貿易機関の加盟国の国民若しくは商標法条約の締約国の国民 」と、
-        同条第三項 中 「前 二項 」と ある のは「 前項」と 読み替えるも の とす る。 
-    </p>
-{{ end }}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    {{ template "css" }}
+</head>
+
+<body>
+    <div class="wrapper d-flex align-items-stretch">
+        {{ template "sidebar" }}
+        <div id="content" class="p-4 p-md-3 dashboard-page">
+            <nav class="navbar navbar-expand-lg mb-3">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                        <i class="fa fa-bars"></i>
+                        <span class="sr-only">Toggle Menu</span>
+                    </button>
+                    <h2 class="mx-2">Dashboard</h2>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+            <div class="dashboard-sec">
+                <div class="row clearfix progress-box mb-3">
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="bg-white oa-box p-3">
+                            <div class="project-info clearfix">
+                                <div class="project-info-left">
+                                    <div class="icon box-shadow bg-blue text-white">
+                                        <i class="fa fa-archive"></i>
+                                    </div>
+                                </div>
+                                <div class="project-info-right">
+                                    <span class="no text-blue weight-500 font-24">{{ len .BI.Budget}}</span>
+                                    <p class="weight-400">Budget Plan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="bg-white oa-box p-3">
+                            <div class="project-info clearfix">
+                                <div class="project-info-left">
+                                    <div class="icon box-shadow bg-light-green text-white">
+                                        <i class="fa fa-usd"></i>
+                                    </div>
+                                </div>
+                                <div class="project-info-right">
+                                    <span class="no text-light-green weight-500 font-24"
+                                        id="income-amt">{{.TotalAmount.Incomes}}</span>
+                                    <p class="weight-400">Earning</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="bg-white oa-box p-3">
+                            <div class="project-info clearfix">
+                                <div class="project-info-left">
+                                    <div class="block">
+                                        <div class="box" id="exp-box">
+                                            <p class="number">
+                                                <span class="num" id="expnum"></span>
+                                                <span class="sub">%</span>
+                                            </p>
+                                        </div>
+                                        <span class="dots" id="exp-dot"></span>
+                                        <svg class="svg" id="exp-svg">
+                                            <defs>
+                                                <linearGradient id="gradientStyle">
+                                                    <stop offset="0%" stop-color="rgb(255, 99, 132)"/>
+                                                    <stop offset="100%" stop-color="#b7b5b5" />
+                                                </linearGradient>
+                                            </defs>
+                                            <circle class="circle" cx="40" cy="40" r="32" style="stroke: url(#gradientStyle)"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="project-info-right">
+                                    <span class="no text-light-orange weight-500 font-24"
+                                        id="exp-amt">{{.TotalAmount.Expenses}}</span>
+                                    <p class="weight-400">Expenses</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="bg-white oa-box p-3 margin-5">
+                            <div class="project-info clearfix">
+                                <div class="project-info-left">
+                                    <div class="block">
+                                        <div class="box" id="net-box">
+                                            <p class="number">
+                                                <span class="num" id="netnum"></span>
+                                                <span class="sub">%</span>
+                                            </p>
+                                        </div>
+                                        <span class="dots" id="net-dot"></span>
+                                        <svg class="svg">
+                                            <defs>
+                                                <linearGradient id="gradientStyle01">
+                                                    <stop offset="0%" stop-color="#a683eb"/>
+                                                    <stop offset="100%" stop-color="#b7b5b5" />
+                                                </linearGradient>
+                                            </defs>
+                                            <circle class="circle" cx="40" cy="40" r="32" style="stroke: url(#gradientStyle01)"></circle>
+                                        </svg>
+                                </div>
+                                </div>
+                                <div class="project-info-right">
+                                    <span class="no text-light-purple weight-500 font-24" id="net-amt"></span>
+                                    <p class="weight-400">Net Amount</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row info-sec">
+                    <div class="col-md-4">
+                        <div class="personal-info">
+                            <div class="user-profile mb-3">
+                                <div class="profile-head my-3">
+                                    <div class="img-area">
+                                        <img src="/static/img/profile/{{.UserDetail.Profile}}" alt="profile image">
+                                    </div>
+                                </div>
+                                <div class="profile-content">
+                                    <div class="name">{{.UserDetail.Name}}</div>
+                                    <div class="about">{{.UserDetail.Job}}</div>
+                                    <div class="about">{{.UserDetail.Email}}</div>
+                                </div>
+                            </div>
+                            <div class="noti-sec p-2">
+                                <a href="/dashboard/media" class="card">
+                                    <img src="/static/img/uploads/{{.BI.ImageSrc}}" alt="balloon with an emoji face"
+                                        class="card__img">
+                                    <span class="card__footer">
+                                        <span>Uploaded Media Gallery</span>
+                                        <span>Expenses slips</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="chart-container">
+                            <canvas id="myChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ template "js" }}
+        <script src="/static/js/chart.js"></script>
+        <script src="/static/js/dashboard.js"></script>
+</body>
+
+</html>
