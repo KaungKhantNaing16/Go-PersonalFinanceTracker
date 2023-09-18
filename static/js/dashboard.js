@@ -12,7 +12,7 @@ function calculate(num, deno) {
     if (isNaN(numerator) || isNaN(denominator)) {
         perc = " ";
     } else {
-        perc = ((numerator / denominator) * 100).toFixed(1);
+        perc = ((numerator / denominator) * 100).toFixed(0);
     }
 
     console.log(perc)
@@ -35,13 +35,13 @@ window.addEventListener('load', function(){
     setInterval(() => {
       if(count == num){
         clearInterval();
-      } else {
+      } else if (count != 0) {
         count += 1;
         numElement.innerText = count;
-      }
+      } 
     }, time)
     circle.style.strokeDashoffset 
-      = 195 - ( 195 * ( num / 100 ));
+      = 200 - ( 200 * ( num / 100 ));
     let dots = item.querySelector('.dots');
     dots.style.transform = 
       `rotate(${360 * (num / 100)}deg)`;

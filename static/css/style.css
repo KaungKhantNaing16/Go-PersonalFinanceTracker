@@ -800,8 +800,8 @@ td .btn {
 
 .circle {
 	stroke-width: 5px;
-	stroke-dasharray: 195;
-	stroke-dashoffset: 195;
+	stroke-dasharray: 200;
+	stroke-dashoffset: 200;
 	animation-duration: 2s;
 	animation-timing-function: linear;
 	animation-fill-mode: forwards;

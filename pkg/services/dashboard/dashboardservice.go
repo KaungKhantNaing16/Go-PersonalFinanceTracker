@@ -57,14 +57,20 @@ func BIDataService(AuthorizeID int) model.BIData {
 	planData, _ := budgetPlanService.GetBudgetsList(AuthorizeID)
 	mediaData, _ := mediaService.GetMedia(AuthorizeID)
 
-	var imgURLs []string
+	var imgURLs string
+	if len(mediaData.Media) == 0 {
+		imgURLs = "bg_img.jpg"
+	}
+
 	for _, media := range mediaData.Media {
-		imgURLs = append(imgURLs, media.ImgURL)
+		if len(media.ImgURL) != 0 {
+			imgURLs = "uploads/" + media.ImgURL
+		}
 	}
 
 	bi := model.BIData{
 		Budget:   &planData,
-		ImageSrc: imgURLs[0],
+		ImageSrc: imgURLs,
 	}
 	return bi
 }
